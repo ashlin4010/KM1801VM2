@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Translation Viewer</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #1a1a1f;
+    --surface: #22222a;
+    --surface2: #2a2a35;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --text: #e8e6e0;
+    --text2: #9994a8;
+    --accent: #7c6af5;
+    --accent2: #a599f7;
+    --accent-bg: rgba(124,106,245,0.15);
+    --danger: #e05050;
+    --success: #4caf7a;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --font: 'Arial', sans-serif;
+    --font-ui: system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-ui);
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--accent2);
+    margin-right: 8px;
+    white-space: nowrap;
+  }
+
+  .sep { width: 1px; height: 22px; background: var(--border2); margin: 0 4px; }
+
+  button {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border2);
+    background: var(--surface2);
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  button:hover { background: #333344; border-color: var(--accent); }
+  button:disabled { opacity: 0.35; cursor: not-allowed; }
+  button:disabled:hover { background: var(--surface2); border-color: var(--border2); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.primary:hover { background: var(--accent2); border-color: var(--accent2); }
+
+  .page-counter { font-size: 13px; color: var(--text2); padding: 0 8px; white-space: nowrap; }
+
+  #shell { display: flex; flex: 1; overflow: hidden; }
+
+  /* Sidebar */
+  #sidebar {
+    width: 200px;
+    min-width: 160px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  #sidebar-header {
+    padding: 10px 12px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--text2);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    min-height: 50px;
+  }
+
+  #page-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border2) transparent;
+  }
+
+  .page-thumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background 0.1s, border-color 0.1s;
+    margin-bottom: 2px;
+  }
+  .page-thumb:hover { background: var(--surface2); }
+  .page-thumb.active { background: var(--accent-bg); border-color: var(--accent); }
+
+  .page-thumb img {
+    width: 36px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--surface2);
+  }
+
+  .page-thumb-info { flex: 1; min-width: 0; }
+  .page-thumb-num { font-size: 12px; font-weight: 600; color: var(--text); }
+  .page-thumb-status { font-size: 11px; color: var(--text2); margin-top: 1px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .dot-done { color: var(--success); }
+  .dot-empty { color: var(--text2); }
+
+  /* Main split */
+  #main { flex: 1; display: flex; overflow: hidden; }
+
+  #left-pane {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    background: #0f0f14;
+    overflow: hidden;
+  }
+
+  #right-pane {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .pane-header {
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    min-height: 50px;
+  }
+
+  /* Image viewer — no overflow scroll by default (fit mode).
+     When zoomed out past fit, overflow kicks in. */
+  #img-viewport {
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* GPU-composite the scroll so it never hits the main thread */
+    will-change: scroll-position;
+    contain: strict;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border2) transparent;
+  }
+
+  /* The image is sized by JS to fit the viewport, then scaled by zoomLevel.
+     We use width/height directly (not CSS transform) so layout is correct
+     and the browser can scroll without repainting. */
+  #page-image {
+    display: block;
+    border-radius: 4px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    /* No transform — we set width/height in JS */
+    image-rendering: auto;
+    flex-shrink: 0;
+  }
+
+  #zoom-controls { display: flex; align-items: center; gap: 4px; }
+  #zoom-controls button { padding: 4px 8px; font-size: 12px; }
+  #zoom-label { font-size: 12px; color: var(--text2); min-width: 38px; text-align: center; }
+
+  /* Right pane content */
+  #translation-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  #translation-textarea {
+    flex: 1;
+    width: 100%;
+    background: var(--bg);
+    color: var(--text);
+    border: none;
+    padding: 20px;
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.8;
+    resize: none;
+    outline: none;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border2) transparent;
+    min-height: 0;
+  }
+  #translation-textarea::placeholder { color: var(--text2); font-style: italic; }
+
+  /* Notes collapsible */
+  #notes-section {
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+  }
+
+  #notes-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text2);
+    user-select: none;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    transition: color 0.15s;
+  }
+  #notes-toggle:hover { color: var(--text); border-color: transparent; background: none; }
+
+  #notes-chevron {
+    display: inline-block;
+    transition: transform 0.2s;
+    font-style: normal;
+    font-size: 10px;
+    margin-left: auto;
+  }
+  #notes-section.open #notes-chevron { transform: rotate(180deg); }
+
+  #notes-body {
+    display: none;
+    padding: 0 14px 10px;
+  }
+  #notes-section.open #notes-body { display: block; }
+
+  #notes-textarea {
+    width: 100%;
+    height: 90px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    font-family: var(--font);
+    font-size: 13px;
+    line-height: 1.6;
+    resize: vertical;
+    outline: none;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border2) transparent;
+    min-height: 60px;
+    max-height: 240px;
+  }
+  #notes-textarea::placeholder { color: var(--text2); font-style: italic; }
+  #notes-textarea:focus { border-color: var(--accent); }
+
+  /* Footer */
+  #translation-footer {
+    padding: 7px 14px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    background: var(--surface);
+  }
+
+  #word-count { font-size: 12px; color: var(--text2); }
+
+  #save-indicator {
+    font-size: 12px;
+    color: var(--success);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  #save-indicator.show { opacity: 1; }
+
+  /* Welcome / empty states */
+  #welcome {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: var(--text2);
+    font-size: 14px;
+    text-align: center;
+    padding: 40px;
+  }
+  #welcome h2 { color: var(--text); font-size: 18px; font-weight: 600; }
+  #welcome p { max-width: 320px; line-height: 1.6; }
+
+  #welcome-img {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text2);
+    font-size: 13px;
+  }
+
+  #folder-badge {
+    font-size: 11px;
+    color: var(--success);
+    background: rgba(76,175,122,0.12);
+    border: 1px solid rgba(76,175,122,0.3);
+    border-radius: 4px;
+    padding: 2px 8px;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 10px 20px;
+    font-size: 13px;
+    color: var(--text);
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.25s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  #toast.show { opacity: 1; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  input[type="file"] { display: none; }
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<div id="toolbar">
+  <span class="toolbar-title">📖 Translation Viewer</span>
+  <div class="sep"></div>
+  <button id="btn-open-folder" onclick="openFolder()">📁 Open Image Folder</button>
+  <span id="folder-badge" style="display:none"></span>
+  <div class="sep"></div>
+  <button onclick="document.getElementById('load-json-input').click()">↑ Load JSON</button>
+  <input type="file" id="load-json-input" accept=".json" onchange="loadJSON(this.files[0])">
+  <button id="btn-save-json" class="primary" onclick="saveJSON()" disabled>↓ Save JSON</button>
+  <div class="sep"></div>
+  <button id="btn-prev" onclick="prevPage()" disabled>← Prev</button>
+  <span class="page-counter" id="page-counter">No pages</span>
+  <button id="btn-next" onclick="nextPage()" disabled>Next →</button>
+</div>
+
+<div id="shell">
+  <div id="sidebar">
+    <div id="sidebar-header">
+      Pages
+      <span id="page-total-badge" style="font-size:11px;color:var(--text2);">0</span>
+    </div>
+    <div id="page-list"></div>
+  </div>
+
+  <div id="main">
+    <!-- Left: image viewer -->
+    <div id="left-pane">
+      <div class="pane-header">
+        <span>Original</span>
+        <div id="zoom-controls">
+          <button onclick="zoom(-0.2)">−</button>
+          <span id="zoom-label">Fit</span>
+          <button onclick="zoom(+0.2)">+</button>
+          <button onclick="resetZoom()" style="font-size:11px;">Fit</button>
+        </div>
+      </div>
+      <div id="img-viewport">
+        <div id="welcome-img">Open a folder to begin</div>
+        <img id="page-image" style="display:none" alt="Current page" />
+      </div>
+    </div>
+
+    <!-- Right: translation + notes -->
+    <div id="right-pane">
+      <div class="pane-header">
+        <span>Translation</span>
+        <span id="pane-page-label" style="color:var(--text2);font-size:11px;"></span>
+      </div>
+
+      <div id="welcome" >
+        <h2>Translation Viewer</h2>
+        <p>Open your image folder to load pages. Images are read directly from disk — no uploading needed.</p>
+        <p style="margin-top:4px;">Translations and notes are saved as a compact JSON file (filenames + text only).</p>
+        <button onclick="openFolder()" style="margin-top:8px;padding:10px 24px;font-size:14px;">📁 Open Image Folder</button>
+      </div>
+
+      <div id="translation-area">
+        <textarea id="translation-textarea" style="display:none"
+          placeholder="Type or paste the translation for this page…"
+          oninput="onTranslationInput()"
+          onkeydown="handleTabKey(event)"></textarea>
+      </div>
+
+      <!-- Collapsible notes -->
+      <div id="notes-section" style="display:none">
+        <button id="notes-toggle" onclick="toggleNotes()">
+          Notes
+          <i id="notes-chevron">▼</i>
+        </button>
+        <div id="notes-body">
+          <textarea id="notes-textarea"
+            placeholder="Translator notes, context, queries…"
+            oninput="onNotesInput()"></textarea>
+        </div>
+      </div>
+
+      <div id="translation-footer" style="display:none">
+        <span id="word-count">0 words</span>
+        <span id="save-indicator">✓ Saved</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── State ──
+  let pages = [];      // { filename, file, objectUrl, translation, notes }
+  let currentIdx = -1;
+  let zoomLevel = 1.0; // multiplier on top of fit size
+  let fitWidth = 0;    // computed fit width in px
+  let fitHeight = 0;
+  let saveTimer = null;
+  let folderName = '';
+  let notesOpen = false;
+
+  const IMAGE_EXTS = /\.(png|jpe?g|webp|gif|bmp|tiff?)$/i;
+
+  // ── Fit-to-viewport image sizing ──
+  // Instead of CSS transform (which causes compositing lag on scroll),
+  // we compute the image's natural fit size and set width/height directly.
+  // Zooming changes a multiplier applied to that fit size.
+
+  function getViewportSize() {
+    const vp = document.getElementById('img-viewport');
+    const pad = 24; // visual breathing room
+    return { w: vp.clientWidth - pad, h: vp.clientHeight - pad };
+  }
+
+  function computeFit(natW, natH, vpW, vpH) {
+    const scale = Math.min(vpW / natW, vpH / natH, 1); // never upscale beyond natural
+    return { w: Math.round(natW * scale), h: Math.round(natH * scale) };
+  }
+
+  function applyImageSize() {
+    const img = document.getElementById('page-image');
+    if (!img || img.style.display === 'none' || !img.naturalWidth) return;
+    const { w: vpW, h: vpH } = getViewportSize();
+    const fit = computeFit(img.naturalWidth, img.naturalHeight, vpW, vpH);
+    fitWidth = fit.w;
+    fitHeight = fit.h;
+    img.style.width  = Math.round(fitWidth  * zoomLevel) + 'px';
+    img.style.height = Math.round(fitHeight * zoomLevel) + 'px';
+    // Update label
+    const pct = Math.round(zoomLevel * 100);
+    document.getElementById('zoom-label').textContent = zoomLevel === 1 ? 'Fit' : pct + '%';
+    // Centre image when smaller than viewport; let it overflow when larger
+    const vp = document.getElementById('img-viewport');
+    const imgW = Math.round(fitWidth * zoomLevel);
+    const imgH = Math.round(fitHeight * zoomLevel);
+    vp.style.alignItems    = imgH <= vpH + 24 ? 'center' : 'flex-start';
+    vp.style.justifyContent = imgW <= vpW + 24 ? 'center' : 'flex-start';
+  }
+
+  function zoom(delta) {
+    zoomLevel = Math.max(0.2, Math.min(5, zoomLevel + delta));
+    applyImageSize();
+  }
+
+  function resetZoom() {
+    zoomLevel = 1;
+    applyImageSize();
+  }
+
+  // Recompute on resize
+  const resizeObs = new ResizeObserver(() => applyImageSize());
+  resizeObs.observe(document.getElementById('img-viewport'));
+
+  // ── Open folder ──
+  async function openFolder() {
+    if (!window.showDirectoryPicker) {
+      toast('Folder picking requires Chrome or Edge.', 4000); return;
+    }
+    try {
+      const dirHandle = await window.showDirectoryPicker({ mode: 'read' });
+      folderName = dirHandle.name;
+      const files = [];
+      let json_file = null;
+      for await (const entry of dirHandle.values()) {
+        if (entry.kind === 'file' && IMAGE_EXTS.test(entry.name)) files.push(await entry.getFile());
+        if (entry.kind === 'file' && entry.name.toLowerCase().endsWith('.json')) json_file = await entry.getFile();
+      }
+      if (!files.length) { toast('No images found in that folder.', 3000); return; }
+      files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+      const pending = window._pendingTranslations || {};
+      window._pendingTranslations = null;
+      loadFilesIntoPages(files, pending);
+      if (json_file) loadJSON(json_file);
+    } catch (e) {
+      if (e.name !== 'AbortError') toast('Could not open folder: ' + e.message, 3000);
+    }
+  }
+
+  function loadFilesIntoPages(files, existing = {}) {
+    pages.forEach(p => { if (p.objectUrl) URL.revokeObjectURL(p.objectUrl); });
+    pages = files.map(f => ({
+      filename: f.name,
+      file: f,
+      objectUrl: URL.createObjectURL(f),
+      translation: existing[f.name]?.translation ?? existing[f.name] ?? '',
+      notes: existing[f.name]?.notes ?? ''
+    }));
+    currentIdx = pages.length ? 0 : -1;
+    document.getElementById('folder-badge').textContent = '📂 ' + folderName;
+    document.getElementById('folder-badge').style.display = 'inline-block';
+    document.getElementById('btn-save-json').disabled = false;
+    renderSidebar();
+    renderPage();
+    toast(`Loaded ${pages.length} image${pages.length !== 1 ? 's' : ''} from "${folderName}"`);
+  }
+
+  // ── Navigation ──
+  function goToPage(idx) {
+    if (idx < 0 || idx >= pages.length) return;
+    saveCurrent();
+    currentIdx = idx;
+    renderPage();
+    highlightSidebarItem(idx);
+  }
+  function prevPage() { goToPage(currentIdx - 1); }
+  function nextPage() { goToPage(currentIdx + 1); }
+
+  // ── Render ──
+  function renderPage() {
+    const page = pages[currentIdx];
+    const img        = document.getElementById('page-image');
+    const welcomeImg = document.getElementById('welcome-img');
+    const ta         = document.getElementById('translation-textarea');
+    const notesTA    = document.getElementById('notes-textarea');
+    const welcome    = document.getElementById('welcome');
+    const notesSec   = document.getElementById('notes-section');
+    const footer     = document.getElementById('translation-footer');
+    const counter    = document.getElementById('page-counter');
+    const paneLabel  = document.getElementById('pane-page-label');
+
+    counter.textContent = pages.length ? `Page ${currentIdx + 1} / ${pages.length}` : 'No pages';
+    paneLabel.textContent = page ? page.filename : '';
+    document.getElementById('btn-prev').disabled = currentIdx <= 0;
+    document.getElementById('btn-next').disabled = currentIdx >= pages.length - 1;
+
+    if (!page) {
+      img.style.display = 'none';
+      welcomeImg.style.display = 'flex';
+      ta.style.display = 'none';
+      welcome.style.display = 'flex';
+      notesSec.style.display = 'none';
+      footer.style.display = 'none';
+      return;
+    }
+
+    welcomeImg.style.display = 'none';
+    welcome.style.display = 'none';
+    notesSec.style.display = 'flex';
+    footer.style.display = 'flex';
+
+    // Hide first, set src, size once dimensions known, then reveal — prevents flash
+    img.style.display = 'block';
+    img.style.visibility = 'hidden';
+    img.style.width = '';
+    img.style.height = '';
+    zoomLevel = 1;
+    img.onload = () => {
+      applyImageSize();
+      img.style.visibility = 'visible';
+    };
+    img.src = page.objectUrl;
+    // Already cached (same objectUrl) — onload won't fire again
+    if (img.complete && img.naturalWidth) {
+      applyImageSize();
+      img.style.visibility = 'visible';
+    }
+
+    ta.style.display = 'block';
+    ta.value = page.translation || '';
+    notesTA.value = page.notes || '';
+    updateWordCount();
+    ta.focus();
+  }
+
+  function saveCurrent() {
+    if (currentIdx < 0 || !pages[currentIdx]) return;
+    pages[currentIdx].translation = document.getElementById('translation-textarea').value;
+    pages[currentIdx].notes       = document.getElementById('notes-textarea').value;
+  }
+
+  function onTranslationInput() {
+    if (currentIdx >= 0 && pages[currentIdx])
+      pages[currentIdx].translation = document.getElementById('translation-textarea').value;
+    updateWordCount();
+    flashSaved();
+    updateSidebarStatus(currentIdx);
+  }
+
+  function onNotesInput() {
+    if (currentIdx >= 0 && pages[currentIdx])
+      pages[currentIdx].notes = document.getElementById('notes-textarea').value;
+    flashSaved();
+  }
+
+  function flashSaved() {
+    clearTimeout(saveTimer);
+    const ind = document.getElementById('save-indicator');
+    ind.classList.add('show');
+    saveTimer = setTimeout(() => ind.classList.remove('show'), 1800);
+  }
+
+  function updateWordCount() {
+    const val = document.getElementById('translation-textarea').value.trim();
+    const words = val ? val.split(/\s+/).length : 0;
+    document.getElementById('word-count').textContent = `${words} word${words !== 1 ? 's' : ''}`;
+  }
+
+  function handleTabKey(e) {
+    if (e.key !== 'Tab') return;
+    e.preventDefault();
+    const ta = e.target, s = ta.selectionStart;
+    ta.value = ta.value.slice(0, s) + '  ' + ta.value.slice(ta.selectionEnd);
+    ta.selectionStart = ta.selectionEnd = s + 2;
+  }
+
+  // ── Notes toggle ──
+  function toggleNotes() {
+    notesOpen = !notesOpen;
+    document.getElementById('notes-section').classList.toggle('open', notesOpen);
+  }
+
+  // ── Sidebar ──
+  function renderSidebar() {
+    const list = document.getElementById('page-list');
+    list.innerHTML = '';
+    document.getElementById('page-total-badge').textContent = pages.length;
+    pages.forEach((p, i) => list.appendChild(makeSidebarItem(p, i)));
+    scrollSidebarToActive();
+  }
+
+  function makeSidebarItem(page, i) {
+    const div = document.createElement('div');
+    div.className = 'page-thumb' + (i === currentIdx ? ' active' : '');
+    div.dataset.idx = i;
+    div.onclick = () => {
+      goToPage(i);
+      document.activeElement.blur();
+    }
+
+    // TODO: less lag
+    const img = document.createElement('img');
+    //img.src = page.objectUrl; img.alt = '';
+
+    const info = document.createElement('div');
+    info.className = 'page-thumb-info';
+
+    const num = document.createElement('div');
+    num.className = 'page-thumb-num';
+    num.textContent = `P${i + 1}`;
+
+    const status = document.createElement('div');
+    status.className = 'page-thumb-status';
+    const words = page.translation ? page.translation.trim().split(/\s+/).filter(Boolean).length : 0;
+    const hasNotes = page.notes && page.notes.trim().length > 0;
+    status.innerHTML = words
+      ? `<span class="dot-done">✓</span> ${words}w${hasNotes ? ' 📝' : ''}`
+      : `<span class="dot-empty">○</span> empty`;
+
+    info.appendChild(num); info.appendChild(status);
+    div.appendChild(img); div.appendChild(info);
+    return div;
+  }
+
+  function highlightSidebarItem(idx) {
+    document.querySelectorAll('.page-thumb').forEach((el, i) =>
+      el.classList.toggle('active', i === idx));
+    scrollSidebarToActive();
+  }
+
+  function updateSidebarStatus(idx) {
+    const list = document.getElementById('page-list');
+    const item = list.querySelector(`[data-idx="${idx}"]`);
+    if (!item || !pages[idx]) return;
+    const words = pages[idx].translation ? pages[idx].translation.trim().split(/\s+/).filter(Boolean).length : 0;
+    const hasNotes = pages[idx].notes && pages[idx].notes.trim().length > 0;
+    item.querySelector('.page-thumb-status').innerHTML = words
+      ? `<span class="dot-done">✓</span> ${words}w${hasNotes ? ' 📝' : ''}`
+      : `<span class="dot-empty">○</span> empty`;
+  }
+
+  function scrollSidebarToActive() {
+    const active = document.querySelector('.page-thumb.active');
+    if (active) active.scrollIntoView({ block: 'nearest' });
+  }
+
+  // ── Save / Load JSON ──
+  function saveJSON() {
+    saveCurrent();
+    if (!pages.length) { toast('No pages to save'); return; }
+    const data = {
+      version: 3,
+      folder: folderName,
+      saved: new Date().toISOString(),
+      pages: pages.map((p, i) => ({
+        index: i + 1,
+        filename: p.filename,
+        translation: p.translation,
+        notes: p.notes || ''
+      }))
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (folderName || 'translation') + '-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('JSON saved ✓');
+  }
+
+  function loadJSON(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!data.pages || !Array.isArray(data.pages)) throw new Error('Invalid format');
+        // Build lookup: filename → { translation, notes }
+        const lookup = {};
+        data.pages.forEach(p => {
+          if (p.filename) lookup[p.filename] = { translation: p.translation || '', notes: p.notes || '' };
+        });
+        if (pages.length) {
+          let applied = 0;
+          pages.forEach(p => {
+            if (lookup[p.filename]) {
+              p.translation = lookup[p.filename].translation;
+              p.notes = lookup[p.filename].notes;
+              applied++;
+            }
+          });
+          renderSidebar(); renderPage();
+          toast(`Applied to ${applied} page${applied !== 1 ? 's' : ''}`);
+        } else {
+          window._pendingTranslations = lookup;
+          toast('JSON loaded — now open the image folder', 4000);
+        }
+      } catch (err) { alert('Could not load JSON: ' + err.message); }
+    };
+    reader.readAsText(file);
+    document.getElementById('load-json-input').value = '';
+  }
+
+  // ── Keyboard ──
+  document.addEventListener('keydown', e => {
+    const active = document.activeElement;
+    const isTA = active === document.getElementById('translation-textarea')
+              || active === document.getElementById('notes-textarea');
+    if (isTA) return;
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); prevPage(); }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  { e.preventDefault(); nextPage(); }
+    if (e.key === '+' || e.key === '=') zoom(+0.2);
+    if (e.key === '-') zoom(-0.2);
+    if (e.key === '0') resetZoom();
+    document.activeElement.blur();
+  });
+
+  // ── Toast ──
+  function toast(msg, duration = 2200) {
+    const el = document.getElementById('toast');
+    el.textContent = msg; el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), duration);
+  }
+</script>
+</body>
+</html>
