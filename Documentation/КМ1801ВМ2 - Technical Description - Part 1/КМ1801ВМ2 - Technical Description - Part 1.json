@@ -1,0 +1,1015 @@
+{
+  "version": 3,
+  "folder": "КМ1801ВМ2 - Technical Description - Part 1",
+  "saved": "2026-05-30T07:12:07.827Z",
+  "pages": [
+    {
+      "index": 1,
+      "filename": "Обложка.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 2,
+      "filename": "Страница 001.jpg",
+      "translation": "INTEGRATED CIRCUIT KM1801VM2\n\nTECHNICAL DESCRIPTION\n\n26 June 1985",
+      "notes": ""
+    },
+    {
+      "index": 3,
+      "filename": "Страница 002 - Содержание.jpg",
+      "translation": "CONTENTS\n\n1. Introduction .......................................... 3\n2. Purpose ............................................... 4\n3. Technical Specifications .............................. 6\n4. Description of Processor Pins ........................ 11\n5. Description of the Processor Structural Diagram ...... 20\n6. Description of Processor Operation ................... 39\n7. Processor Initialization ............................. 59\n8. Processor Status Word ................................ 62\n9. Instruction Set Description .......................... 67\n10. Processor Interrupts ............................... 147\n11. Features of Executing Certain Instructions ......... 157\n12. Application of the KM1801VM2 Microcircuit ......... 159\n\nAppendix 1. Symbols and Abbreviations ................. 161\nAppendix 2. Instruction Set ........................... 164\n\nRevision Record Sheet ................................. 167\n",
+      "notes": ""
+    },
+    {
+      "index": 4,
+      "filename": "Страница 003 - 1. Введение.jpg",
+      "translation": "I. INTRODUCTION\n\nThis technical description (TD) is intended for the study of the KM1801VM2 integrated circuit.\n\nSymbols and abbreviations used in this TD are given in Appendix 1.\n\nThe instruction set is given in Appendix 2.\n\n[Green Text]\nHereafter in the text, wherever the KM1801VM2\nintegrated circuit type is mentioned,\nit shall also be understood to apply to the KR1801VM2.",
+      "notes": ""
+    },
+    {
+      "index": 5,
+      "filename": "Страница 004 - 2. Назначение.jpg",
+      "translation": "2. PURPOSE\n\n2.1. The KM1801VM2 integrated circuit is a single-chip 16-bit microprocessor\n(hereinafter referred to as the CPU) intended for processing digital information.\n\nAs part of a computer system, the CPU may be used for controlling technological\nprocesses, in instrumentation and measurement equipment, in communication\nsystems, and for solving engineering, technical, and economic problems.\n\n2.2. Operating Conditions\nThe integrated circuit can withstand mechanical stresses in accordance with\nGOST 18725-73:\n    vibration loads in the frequency range 1–600 Hz with a maximum\n    acceleration of 98 m/s² (10 g);\n    repeated shocks with a maximum acceleration of 735 m/s² (75 g),\n    shock duration 2–6 ms;\n    single shocks with a maximum acceleration of 1470 m/s² (150 g),\n    shock duration 1–3 ms;\n    linear centrifugal loads with a maximum acceleration of\n    245 m/s² (25 g).\n\nOperation of the integrated circuit is permitted under the following climatic\nconditions in accordance with GOST 18725-73:\n    maximum ambient temperature: +70°C;\n    minimum ambient temperature: −10°C;\n    repeated cyclic temperature changes from −10°C to +70°C;\n    maximum relative air humidity of 98% at a temperature of +35°C,\n    without moisture condensation.",
+      "notes": "ПРЦ is an abbreviation for процессор (\"processor\"). Since this document consistently uses the abbreviation, translating it as CPU is natural and matches PDP-11 terminology.\n\nтехнологические процессы is the standard Soviet phrase for industrial/process-control applications.\n\nThe environmental specifications are characteristic of the commercial/industrial grade KM1801VM2, not the later military-temperature variants.\n\nThe handwritten note above the title again changes КМ1801ВМ2 to КР1801ВМ2, consistent with the editorial corrections seen on previous pages."
+    },
+    {
+      "index": 6,
+      "filename": "Страница 005.jpg",
+      "translation": "2.3. The minimum operating life of the integrated circuit under the specified\noperating modes and conditions is not less than 15,000 hours. The failure rate\nduring operation is 0.9 × 10⁻⁶ failures per hour.\n\n2.4. The CPU is powered from a single supply voltage source of:\n    +5 V ±5%.",
+      "notes": "The stated failure rate corresponds to 0.9 failures per million device-hours.\n\nИнтенсивность отказов literally means \"failure intensity\"; in English reliability specifications this is normally rendered as failure rate.\n\nНаработка is a reliability-engineering term. \"Operating life\" is the most natural translation here, although \"service life\" or \"mean accumulated operating time\" are sometimes used."
+    },
+    {
+      "index": 7,
+      "filename": "Страница 006 - 3. Технические данные.jpg",
+      "translation": "3. TECHNICAL DATA\n\n3.1. The CPU is manufactured using P-channel MOS technology. The die,\ncontaining approximately 120 thousand elements, has dimensions of\n5.3 × 5.45 mm and is housed in a 40-pin metal-ceramic DIP package,\ntype 2123.40-6, UФ0.487.024 TU. The conventional schematic symbol\nof the CPU is shown in Fig. 1.\n\n3.2. The number system for data and instructions is binary.\n3.3. Data and instruction word length is 16 binary bits.\n\n3.4. The instruction set includes zero-address, one-address, and two-address instructions.\n\n3.5. Addressing modes:\n    register,\n    register indirect,\n    autoincrement,\n    indirect autoincrement,\n    autodecrement,\n    indirect autodecrement,\n    indexed,\n    indirect indexed.\n\n3.6. Number of general-purpose registers: 8.\n3.7. Number of information transfer channels: 1.\n3.8. Number of interrupt request levels: 2.\n    Processing of external and internal interrupts is performed using stack-type memory (the stack).\n3.9. Number of instructions: 77.\n3.10. Addressable memory capacity: 128 Kbytes\n(user programs: 64 Kbytes).\n\n3.11. Clock frequency:\n    0–10 MHz (Group A),\n    0–8 MHz  (Group B).\n\n3.12. Execution time of an ADD instruction using register addressing at a clock frequency of 10 MHz: 1.0 μs.",
+      "notes": "The addressing modes listed are exactly the eight standard PDP-11 addressing modes.\n\n"
+    },
+    {
+      "index": 8,
+      "filename": "Страница 007 - Рис 1. Условное графическое обозначение.jpg",
+      "translation": "Figure 1. Conventional schematic symbol of the KM1801VM2 integrated circuit.\n\n[AI Description]\nThe figure shows the KM1801VM2 microprocessor as a functional block with\nits external signals grouped by purpose and annotated with package pin numbers.\n\nThe right side contains the multiplexed address/data bus AD0–AD15\n(pins 2–9 and 32–39), together with system bus control signals:\n    DMGO   – DMA grant output\n    SYNC   – bus cycle synchronization\n    DIN    – data input strobe\n    DOUT   – data output strobe\n    WTBT   – write-byte control\n    IAKO   – interrupt acknowledge output\n    INIT   – initialization signal\n    SEL    – bus selection signal\n    CLCO   – clock output\n\nThe left side contains clock, interrupt, power-fail, DMA, and bus\nhandshake signals:\n\n    CLCI   – clock input\n    VIRQ   – vectored interrupt request\n    EVNT   – event interrupt request\n    HALT   – halt request\n    ACLO   – AC power low warning\n    DCLO   – DC power low/reset\n    AR     – address accepted\n    DMR    – DMA request\n    SACK   – DMA acknowledge\n    RPLY   – bus reply\n\nThe power supply connections are:\n\n    SP1    –  Reserved Output?\n    SP2    –  Reserved Input?\n\nPin numbers corresponding to each signal are shown adjacent to the\nsymbol.",
+      "notes": ""
+    },
+    {
+      "index": 9,
+      "filename": "Страница 008.jpg",
+      "translation": "3.13. Execution time of the \"multiply\" instruction at a clock frequency\nof 10 MHz is 10 μs.\n\n3.14. Execution time of the \"divide\" instruction at a clock frequency\nof 10 MHz is 12 μs.\n\n3.15. The electrical characteristics of the CPU at a temperature of\n+25°C are given in Table 1.\n\n3.16. Absolute maximum ratings of the electrical parameters over the\ntemperature range from −10°C to +70°C:\n\n    maximum supply voltage                         UCC = +7 V;\n    maximum input voltage                          UIH ≤ UCC;\n    minimum input voltage                          UIL ≥ 0 V;\n    load capacitance                               CL ≤ 60 pF.",
+      "notes": ""
+    },
+    {
+      "index": 10,
+      "filename": "Страница 009 - Таблица 1.Электрические параметры.jpg",
+      "translation": "| No. | Parameter                                               | Symbol | Min  | Max  | Output Current (mA) | Temperature (°C) |\n| --- | ------------------------------------------------------- | ------ | ---- | ---- | ------------------- | ---------------- |\n| 1   | Low-level output voltage, V                             | UOL    | —    | 0.45 | 3.2                 | +25              |\n| 2   | High-level output voltage, V                            | UOH    | 2.45 | —    | -0.2                | +25              |\n| 3   | Low-level input voltage, V                              | UIL    | —    | 0.7  | —                   | +25, -10, +70    |\n| 4   | High-level input voltage, V                             | UIH    | 2.2  | —    | —                   | +25, -10, +70    |\n| 5   | Input leakage current at low-level input voltage, µA    | IIL    | —    | 1    | —                   | +25              |\n| 6   | Input leakage current at high-level input voltage, µA   | IIH    | —    | 1    | —                   | +25              |\n| 7   | Output leakage current at low-level output voltage, µA  | ILOL   | —    | 10   | —                   | +25              |\n| 8   | Output leakage current at high-level output voltage, µA | ILOH   | —    | 10   | —                   | +25              |\n| 9   | Supply current, mA                                      | ICC    | —    | 350  | —                   | +25, -10, +70    |\n| 10  | Low-level output voltage, V                             | UOL    | —    | 0.5  | 3.2                 | -10, +70         |\n",
+      "notes": ""
+    },
+    {
+      "index": 11,
+      "filename": "Страница 010.jpg",
+      "translation": "| No. | Parameter                                               | Symbol | Min | Max | Output Current (mA) | Temperature (°C) |\n| --- | ------------------------------------------------------- | ------ | --- | --- | ------------------- | ---------------- |\n| 11  | High-level output voltage, V                            | UOH    | 2.4 | —   | -0.2                | -10, +70         |\n| 12  | Input leakage current at low-level input voltage, µA    | IIL    | —   | 10  | —                   | +70              |\n| 13  | Input leakage current at high-level input voltage, µA   | IIH    | —   | 10  | —                   | +70              |\n| 14  | Output leakage current at low-level output voltage, µA  | ILOL   | —   | 50  | —                   | +70              |\n| 15  | Output leakage current at high-level output voltage, µA | ILOH   | —   | 50  | —                   | +70              |\n",
+      "notes": ""
+    },
+    {
+      "index": 12,
+      "filename": "Страница 011 - 4. Описание выводов ПРЦ.jpg",
+      "translation": "4. DESCRIPTION OF CPU PINS\n\nThe electrical circuits of the CPU input and output elements are shown in\nFigures 2–6. The designations and names of the pins are given in Table 2.\n\nPins 09–02, 39–32 — AD (0–15)\n\nSixteen input/output lines of the system bus multiplexed for addresses and\ndata. They are intended for transmitting and receiving addresses and data.\nThe use of the same pins for both address and data transfer is achieved by\ntime multiplexing. A low signal level on these pins corresponds to the\ntransmission of a logical one.\n\nPin 10 - Reserved output.\nPin 11 - Reserved input.\n\nPin 12 — \"DMR\"\nDMA request signal input. This signal (active low) is asserted by an external\ndevice on the system bus to indicate that it requires direct access to memory.\n\nPin 13 — \"SACK\"\nDMA grant acknowledge signal input. This signal (active low) is asserted by\nthe device that requested DMA after it receives the DMA grant signal and\nindicates that bus control has been transferred to that device.\n\nPin 14 — \"DMGO\"\nDMA grant signal output. This signal (active low) is asserted by the CPU in\nresponse to receipt of the DMR signal, indicating that direct memory access\nhas been granted.",
+      "notes": ""
+    },
+    {
+      "index": 13,
+      "filename": "Страница 012 - Рис 2. Элемент входа-выхода.jpg",
+      "translation": "Figure 2. Input/output element on pins AD(0:15)\n\n\n\nFigure 3. Output element on pins SYNC, DIN, DOUT, WTBT\n\n[AI description]\n\nThese figures are the \"electrical circuits of the input and output elements\" mentioned at the beginning of page 11:\n\"The electrical circuits of the CPU input and output elements are shown in Figures 2–6.\"\n\nThe drawing shows that each AD pin is a bidirectional bus transceiver:\n  * The pin can operate as an input (during reads).\n * The pin can operate as an output (during address or data writes).\n * The output drivers can be disconnected from the bus by the tri-state control signal.\n\nFigure 3 — SYNC, DIN, DOUT, WTBT\nThis corresponds to several signals described on page 11.\nUnlike AD(0:15), these are output-only control signals.",
+      "notes": ""
+    },
+    {
+      "index": 14,
+      "filename": "Страница 013 - Рис 4. Выходной элемент.jpg",
+      "translation": "Figure 4. Output element on pins\nCLCO, DMGO, IAKO, SEL\n\nFigure 5. Output element on pins\nINIT, SP1\n\n\nFigure 6. Input element on pins\nCLCI, VIRQ, HALT, ACLO, DCLO,\nAR, DMR, SACK,\nRPLY, EVNT, SP2\n\n[AI description]\nWhat the figures tell us:\n\nFigure 4 — CLCO, DMGO, IAKO, SEL\nThis is clearly a push-pull (totem-pole) output stage.\n\nFigure 5 — INIT, SP1\nOnly a single pull-down transistor is shown.\nWhich is essentially an open-drain/open-collector output.\n\nFigure 6 — Inputs\nThis shows the standard input structure.\nThe resistor-like element at the pin and the MOS transistor to ground form the input protection/bias network ahead of the logic gate.",
+      "notes": ""
+    },
+    {
+      "index": 15,
+      "filename": "Страница 014 - Таблица 2. Выводы ПРЦ.jpg",
+      "translation": "| Pin | Signal | Type         | Description                              |\n| --- | ------ | ------------ | ---------------------------------------- |\n| 1   | OV     | —            | Common (Ground) 1                        |\n| 2   | AD7    | Input/Output | AD bit 7                                 |\n| 3   | AD6    | Input/Output | AD bit 6                                 |\n| 4   | AD5    | Input/Output | AD bit 5                                 |\n| 5   | AD4    | Input/Output | AD bit 4                                 |\n| 6   | AD3    | Input/Output | AD bit 3                                 |\n| 7   | AD2    | Input/Output | AD bit 2                                 |\n| 8   | AD1    | Input/Output | AD bit 1                                 |\n| 9   | AD0    | Input/Output | AD bit 0                                 |\n| 10  | SP1    | Output       | Reserved                                 |\n| 11  | SP2    | Input        | Reserved                                 |\n| 12  | DMR    | Input        | DMA request signal                       |\n| 13  | SACK   | Input        | DMA grant acknowledge signal             |\n| 14  | DMGO   | Output       | DMA grant signal                         |\n| 15  | CLCO   | Output       | Clock output                             |\n| 16  | CLCI   | Input        | Clock input                              |\n| 17  | RPLY   | Input        | External device reply signal             |\n| 18  | DOUT   | Output       | Data output strobe (write cycle control) |\n| 19  | WTBT   | Output       | \"Write Byte\" control signal              |\n| 20  | OV     | —            | Common (Ground) 2                        |\n| 21  | SYNC   | Output       | Bus cycle synchronization signal         |\n| 22  | DIN    | Output       | Data input strobe (read cycle control)   |\n| 23  | AR     | Input        | \"Address Accepted\" signal                |\n| 24  | IAKO   | Output       | Interrupt acknowledge signal             |\n| 25  | ACLO   | Input        | AC power-fail signal                     |\n| 26  | DCLO   | Input        | Power supply failure signal              |\n| 27  | INIT   | Output       | External device initialization signal    |\n| 28  | VIRQ   | Input        | Vectored interrupt request signal        |\n",
+      "notes": ""
+    },
+    {
+      "index": 16,
+      "filename": "Страница 015.jpg",
+      "translation": "| Pin | Signal | Type         | Description                                       |\n| --- | ------ | ------------ | ------------------------------------------------- |\n| 29  | HALT   | Input        | Console mode entry signal                         |\n| 30  | EVNT   | Input        | Timer interrupt signal                            |\n| 31  | SEL    | Output       | \"Access system memory – read port\" control signal |\n| 32  | AD15   | Input/Output | AD bit 15                                         |\n| 33  | AD14   | Input/Output | AD bit 14                                         |\n| 34  | AD13   | Input/Output | AD bit 13                                         |\n| 35  | AD12   | Input/Output | AD bit 12                                         |\n| 36  | AD11   | Input/Output | AD bit 11                                         |\n| 37  | AD10   | Input/Output | AD bit 10                                         |\n| 38  | AD9    | Input/Output | AD bit 9                                          |\n| 39  | AD8    | Input/Output | AD bit 8                                          |\n| 40  | U      | —            | Power supply input                                |\n",
+      "notes": ""
+    },
+    {
+      "index": 17,
+      "filename": "Страница 016.jpg",
+      "translation": "Pin 15. \"CLCO\" (Clock Output)\nOutput of the chip’s internal clock signal. Used \nto synchronize devices operating with the CPU. The pulse \nfrequency of CL CO is equal to half the pulse frequency of CLCI.\n\nPin 16. \"CLCI\" (Clock Input)\nInput of the clock pulse signal. This signal is used\nto synchronize the operation of the PRC’s internal devices.\nThe microcircuit consists of static-type devices.\nTherefore, the clock frequency can be from 0 to 10 MHz.\n\nPin 17. \"~RPLY\" (Reply)\nInput of the response signal of the slave device during an exchange.\nThis signal is asserted by the slave device during exchanges over the system\nbus, informing the master device that it has accepted\nor delivered information to the system bus.\n\nPin 18. \"~DOUT\" (Data Out Strobe)\nOutput of the write strobe signal during the exchange procedure\nover the system bus. By asserting a low level signal\non this pin, the CPU informs the slave device that data\nhave been placed on the system bus.\n\nPin 19. \"~WTBT\" (Write Byte)\nOutput of the combined informational signal \"write-byte\"\nDuring address output in the exchange procedure cycle over the system\nbus, a low level on this pin indicates that a write procedure is being performed. During data output, a low level on this pin indicates\nthat a byte rather than a word is being output.",
+      "notes": "ПРЦ = процессор = processor ≈ CPU"
+    },
+    {
+      "index": 18,
+      "filename": "Страница 017.jpg",
+      "translation": "Pin 20. \"0V\" (GND)\nCommon output (ground) for all CPU devices, except for the AD (0–15) and SEL signal amplifiers.\n\nPin 21. \"~SYNC\"\nExchange synchronization signal output.\nBy setting a low signal level on this pin, the CPU informs\nthe slave device that the address has been placed on the system bus.\n\nPin 22. \"~DIN\"\nData read procedure signal output. By setting a low\nsignal level on this pin, the CPU informs the slave device\nthat it is ready to receive data from the system bus.\n\nPin 23. \"~AR\"\nAddress Accepted signal input. After issuing an address\nonto the system bus and asserting the SYNC signal,\nthe CPU waits for the AR signal. A low signal level on this pin indicates\nthat the slave device has accepted the address and the CPU may continue the exchange procedure.\n\nPin 24. \"~IAKO\"\nInterrupt acknowledge signal output. A low signal level on this\npin indicates that the CPU permits the device that asserted the\ninterrupt request to place the interrupt vector onto the system bus.\n\nPin 25. \"~ACLO\"\nMains power failure signal input. A transition of the signal from high\nto low level on this pin causes a CPU interrupt and transfers execution to\nthe power-failure interrupt service routine. A high signal level on this\npin indicates normal mains power conditions and causes transition\nto the execution of the microprogram start-up.",
+      "notes": ""
+    },
+    {
+      "index": 19,
+      "filename": "Страница 018.jpg",
+      "translation": "Pin 26. \"~DCLO\"\nPower supply failure signal input. A low level of the signal on this pin causes initialization\nof all blocks of the microcircuit and the appearance of the \"set\" signal on pin \"~INIT\".\n\nPin 27. \"~INIT\"\nSet signal output. This signal is used for initializing the peripheral part of the system.\nThis signal duplicates the DCLO signal\n\nPin 28. \"~VIRQ\"\nVector interrupt request signal input.\nWhen a low level of the CPU signal appears on this pin, if interrupts are\nenabled, outputs the signals \"~DIN\" & \"~TAKO\".\n\nPin 29. \"~HALT\"\nConsole mode entry signal input.\nThe appearance of a low signal level on this pin\ncauses a transition to the console-mode program located in ROM.\n\nPin 30. \"~EVNT\"\nTimer interrupt request signal input.\nThe transition of the signal on this pin from high to low indicates\nthat the timer has issued an interrupt request.\n\nPin 31. \"~SEL\"\nSystem memory area access or port read (initial conditions register) signal output.\nThe appearance of this signal (low level) in the address output phase indicates\nthat the exchange is not with the main, but with additional (system) memory.",
+      "notes": ""
+    },
+    {
+      "index": 20,
+      "filename": "Страница 019.jpg",
+      "translation": "The appearance of this signal in the read phase simultaneously\nwith the \"~DIN\" signal (low level) indicates that the CPU is performing\nthe procedure for reading the initial-conditions register.\n\nNote: A low level must be applied to pin \"~SP2\" (pin II).\nNote: For processor operation on the system bus using \"~SP1\" and \"~SP2\" signals, see Chapter 12 of this Technical Description (TO).",
+      "notes": ""
+    },
+    {
+      "index": 21,
+      "filename": "Страница 020 - 5. Описания структурной схемы ПРЦ.jpg",
+      "translation": "5. DESCRIPTION OF THE STRUCTURAL DIAGRAM OF THE CPU\n\n5.1. The general structural diagram of the PRC is shown in Fig.7.\n\nThe CPU consists of the following blocks:\n    Operational block (OB);\n    Microprogram control block (BMU);\n    Extended arithmetic block (BRA);\n    Interrupt block (BPR);\n    Branch condition processing block (BOV);\n    Interface block (IB).\n\nVia the internal address-data bus, data and instructions are supplied to the OB,\nand instructions to the BOV and BMU. On this same bus, the OB outputs operand addresses.\n\nThrough interface elements, the internal bus is connected to the AD pins and through them to the system bus.\n\nThe BMU outputs the microinstruction code onto the microinstruction bus.\nFrom the microinstruction bus, the corresponding fields of the microinstruction are supplied\nto all CPU blocks except the BOV.\n\nIn addition, the blocks are interconnected by synchronous and asynchronous control signals.\n\nThe OB is the leading block. The OB synchronization block monitors,\ndirectly or indirectly, the state of all groups of blocks and sets the execution cycle\nof the microinstructions that make up an instruction.\n\n5.2. Operational block\nThe structural diagram of the operational block (OB) is shown in Fig.8.\nThe OB is intended to perform the following functions:\n  Address calculation and its temporary storage in the address register;\n  \n",
+      "notes": ""
+    },
+    {
+      "index": 22,
+      "filename": "Страница 021 - Рис 7. Структурная схема ПРЦ.jpg",
+      "translation": "Figure 7. Structural Diagram of the KM1801VM2 Integrated Circuit\n\nОперационный блок - Execution Unit\n\nБлок расширенной арифметики - Extended Arithmetic Unit\n\nИнтерфейсный блок - Bus Interface Unit\n\nБлок прерываний - Interrupt Unit\n\nБлок обращения к памяти - Memory Access Unit\n\nБлок микропрограммного управления - Microprogram Control Unit\n\nУсилитель - Buffer / Driver\n\n\nInternal signal labels:\nУпр. - Control\n\nУпр. ар. - Arithmetic Control\n\nУпр. обр. - Memory Access Control\n\nМК - Microinstructions\n\nТИ - Timing Signals\n\nСМ(упр.) - Control Signals\n\nАдр. - Address\n\nИнф. - Information (Data)\n\nВпр. - Interrupt Request",
+      "notes": ""
+    },
+    {
+      "index": 23,
+      "filename": "Страница 022 - Рис 8. Структурная схема ОБ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 24,
+      "filename": "Страница 023.jpg",
+      "translation": "5.2. Operational block\nThe structural diagram of the operational block (OB) is shown in Fig.8.\nThe OB is intended to perform the following functions:\n  Address calculation and its temporary storage in the address register;\n  Receiving data and storing them in registers;\n  Performing arithmetic and logical operations between registers and between registers and constants;\n  Outputting data to the system bus;\n  Forming interrupt vector addresses;\n  Forming states,\n\nThe OB includes:\n  Aata buffer register (BRD);\n  Address register, instruction counter copy register and address comparator (RA, KRSK, KOMP);\n  OB instruction buffer register (BRK OB);\n  OB instruction register (RK OB);\n  Constants block;\n  Processor status register, processor status copy register (RSP, KRSP);\n  General-purpose registers, accumulator, and source register (RONY, AK, RI);\n  16-bit arithmetic-logic unit (ALU);\n  Shifter (SDV);\n  Byte exchange block and write circuit (BOB and Skhed).\n\nData are received into the BRD from external 37.\nWhen writing to external memory, in the BRD the data are prepared for transfer.\n\nIn the address register (RA), the formed address is written for transmission to the system bus during exchanges.\nSince in the PRC commands are fetched in advance, then by the end\nof execution of the current command the next command has already been received into the BRK,\ni.e., this command can no longer be programmatically modified.\nTo ensure the possibility of writing to the address following\n",
+      "notes": ""
+    },
+    {
+      "index": 25,
+      "filename": "Страница 024.jpg",
+      "translation": "A copy of the Program Counter (PC Copy Register, PCRC) and a comparator\n(COMP) have been added to the instruction-word processing path. The PCRC\nstores the address of the word following the instruction, i.e., PC + 2.\n\nBefore a write cycle, the address on the Address Register (AR) is compared\nby the comparator with the contents of the PCRC. If they are equal, then\nafter completion of the write cycle the instruction stored at the address\ncontained in the PCRC is read. In other words, the next instruction is\nfetched again. The previously fetched next instruction is not executed.\nThis repeated-read procedure is implemented by hardware microprogram control.\n\nIn some instructions, the low-order byte of the instruction is used to\ncalculate an address. For receiving this byte, the BRK OB and RK OB\nregisters are used. The low-order byte of the instruction being executed\nis stored in RK OB.\n\nThe Constant Block is used to generate constants required for execution\nof certain operations and for generating interrupt vectors. The Constant\nBlock is implemented as a ROM whose cell addresses are contained in a\nspecial field of the microinstruction. The instruction displacement code\nis also read from the constant address. For this purpose, the code of the\nlow-order byte of the instruction is supplied to the Constant Block.\n\nFor selecting interrupt vectors, the interrupt vector address generated\nby the Interrupt Block is also supplied to the Constant Block.\n\nThe Processor Status Register and the Status Register Copy Register are\nused for storing condition codes (processor states) generated during\nexecution of operations in the CPU. The format of the Status Register and\nthe purpose of its individual bits will be described later in the\ndescription of processor operation.\n\nThe Status Register Copy Register preserves the contents of the Processor\nStatus Register during the processing of certain interrupts.\n\nThe Execution Unit contains ten registers used for temporary storage of\ninformation. Eight of these are General-Purpose Registers (GPRs). The GPR\nwith address 07 is used as the Program Counter, and the GPR with address 06\nis used as the Stack Pointer.",
+      "notes": ""
+    },
+    {
+      "index": 26,
+      "filename": "Страница 025.jpg",
+      "translation": "...stack pointer. These registers may not be used for data storage.\n\nThe register block also contains an accumulator and a source register.\n\nThe accumulator register is used for temporary storage of information\nduring execution of certain instructions, while the source register is\nused to store the source operand during execution of two-operand\ninstructions.\n\nThe general-purpose registers are accessible by software; the\naccumulator and source register are accessible only by microprogram\ncontrol.\n\nAll arithmetic and logical operations on operands are performed in a\n16-bit Arithmetic Logic Unit (ALU). The ALU can process both 16-bit\nwords and 8-bit bytes. The ALU includes a carry-lookahead scheme,\nallowing carry propagation through no more than three bit positions\nin sequence.\n\nFrom the ALU, the operation result is sent to the shifter (SHF),\nwhere, during shift instructions, the operand is shifted one bit\nposition left or right, and the logic for arithmetic and circular\n(rotating) shifts is implemented.\n\nEither a 16-bit word or an 8-bit byte may be shifted.\n\nAfter the shifter, the final result of the operation is obtained and\nwritten into a special register. Writing into this register completes\nthe read phase of the microinstruction execution cycle.\n\nDuring the write phase of microinstruction execution, information from\nthe register holding the operation result passes through the Byte\nExchange Block (BEB) to the Write Circuit (WRC).\n\nIn the BEB, the high-order and low-order bytes of an operand are\nexchanged when executing the SWAB instruction.\n\nThe BEB is also used when outputting the high-order byte during byte\ninstructions.\n\nAll blocks and registers of the Execution Unit are connected by two\nbuses: the X,Y Read Bus and the X',Y' Write Bus.\n\nDuring the read phase, information is read onto the X bus or onto the\nY bus in unary operations,",
+      "notes": ""
+    },
+    {
+      "index": 27,
+      "filename": "Страница 026.jpg",
+      "translation": "...or simultaneously onto the X and Y buses from different sources during\nbinary operations, and is then supplied to the ALU.\n\nThe write circuitry places information onto the X' and Y' buses, from\nwhich it is routed to the destination address.\n\nBy separating the read and write buses, decoding of the read address can\nbe performed simultaneously with the write cycle, and decoding of the\nwrite address can be performed simultaneously with the read cycle,\nthereby reducing the microinstruction execution time.\n\nIn addition to the operational section, the Execution Unit (EU) also\ncontains a microinstruction decoder, a Status Formation Circuit (SFC),\nand an Execution Unit Synchronization Block (EUSB).\n\nThe fields of the microinstruction related to execution of the\noperational portion of the microinstruction—namely operand addresses,\nwrite mode, and operation code—are supplied to the Execution Unit\nmicroinstruction decoder.\n\nAfter decoding the microinstruction, the control codes are supplied to\nthe corresponding blocks of the operational section of the Execution\nUnit.\n\nBased on signals received from the ALU, the shifter, and the Extended\nArithmetic Block (EAB), the Status Formation Circuit (SFC) generates\nthe operation result flags N, Z, V, and C, which are stored in the\nProcessor Status Register (PSR) and subsequently used by branch\ninstructions.\n\nOperation of the Execution Unit is controlled by the Execution Unit\nSynchronization Block (EUSB). The EUSB also synchronizes all other CPU\nblocks.\n\nThe EUSB monitors the readiness of the Interface Unit (IU) and the\nMicroprogram Control Unit (MCU).\n\nUpon completion of a microinstruction execution cycle, the EUSB\ngenerates the EU READY signal, which starts the MCU. The MCU then\ngenerates the next microinstruction.\n\nThe Interface Unit is started by the signal generated when an address\nis written into the Address Register (AR). This signal indicates that\nan address has been prepared for output onto the system bus.",
+      "notes": ""
+    },
+    {
+      "index": 28,
+      "filename": "Страница 027 - 5.3. Блок расширенной арифметики.jpg",
+      "translation": "5.3. Extended Arithmetic Unit\n\nThe structural diagram of the Extended Arithmetic Unit (EAU) is shown\nin Figure 9.\n\nThe EAU is intended to provide hardware support for execution of the\nmultiply, divide, and arithmetic shift instructions\n(MUL, DIV, ASH, ASHC).\n\nWhen these instructions are executed, control is transferred to the EAU\nafter the operands have been fetched.\n\nTo execute the main part of the instruction, a single microinstruction\nis used. During execution of the operation, this microinstruction is\nmodified according to a specific algorithm by the EAU control logic.\n\nAfter completion of the main part of the operation, during multiplication\nand division, the microinstruction is changed and result correction and\nstatus generation are performed.\n\nThe EAU consists of:\n    Extended Arithmetic Register 1 (EAR1);\n    Extended Arithmetic Register 2 (EAR2);\n    Cycle Counter (CC);\n    Cycle Decoder (CD);\n    Microinstruction Decoder (MID);\n    Control Logic (CL).\n\nEAR1 and EAR2 are used to store intermediate computation results.\n\nEAR2 is a shifting register. During execution of operations it\nsupplements the ALU shifter.\n\nDuring multiplication, the multiplier is loaded into EAR2, while\npartial products are formed in EAR1.\n\nAt the end of the operation, the upper part of the product is contained\nin EAR1 and the lower part in EAR2.\n\nDuring division, the upper part of the dividend is loaded into EAR1\nand the lower part into EAR2.\n\nAt the end of the operation, the quotient is formed in EAR2 and the\nremainder in EAR1.",
+      "notes": ""
+    },
+    {
+      "index": 29,
+      "filename": "Страница 028 - Рис 9. Структурная схема БРА.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 30,
+      "filename": "Страница 029 - 5.4. Блок микропрограммного управления.jpg",
+      "translation": "When performing shift operations, the word being shifted is loaded\ninto EAR1, or into EAR2 and EAR1 if a double-word operand is being\nshifted.\n\nEach EAU instruction is executed in a specific number of clock cycles.\nA constant determining the number of cycles is loaded into the Cycle\nCounter (CC).\n\nInformation from the Cycle Counter is supplied to the Cycle Decoder (CD),\nwhich generates control signals that are sent to the Control Logic (CL).\n\nBased on the instruction code and signals from the Cycle Counter, the\nControl Logic implements the algorithm for execution of the operational\npart of the instruction, result correction, and condition code generation.\n\nThe EAR1, EAR2, and CC registers are addressable by microinstructions.\n\nThe address field of the microinstruction is supplied to the\nMicroinstruction Decoder, where read and write control signals for\nthese registers are generated under control of signals from the\nOperational Unit Synchronization Block.\n\n5.4. Microprogram Control Unit\n\nThe structural diagram of the Microprogram Control Unit (MCU) is shown\nin Figure 10.\n\nThe MCU is intended to generate the sequence of microinstructions\nrequired to execute an instruction based on the received instruction code.\n\nThe MCU consists of the following blocks and registers:\n    Instruction Buffer Register (IBR);\n    Instruction Decoder (ID);\n    Instruction Register (IR);\n    Microinstruction Memory (MIM);\n    Microinstruction Register (MIR);\n    Next Address Register (NAR);\n    Current Address Register (CAR);\n    Interrupt Register (INTR);\n    MCU Synchronization Block (MCU-SYNC).",
+      "notes": ""
+    },
+    {
+      "index": 31,
+      "filename": "Страница 030 - Рис 10. Структурная схема БМУ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 32,
+      "filename": "Страница 031.jpg",
+      "translation": "Every instruction received by the processor first enters the Instruction\nBuffer Register (IBR).\n\nFrom the IBR, the instruction is sent to the Instruction Decoder (ID),\nwhere preliminary decoding takes place. The main instruction decoding\nfunction is performed by the decoder PLA. The decoder PLA contains\n50 logic product terms. Part of the decoder is implemented with\ncombinational logic circuits. Most signals from the Instruction Decoder\nare applied to control the PLA of the Microinstruction Memory (MIM).\nSome signals are applied to the Interrupt Register and the Interface Block.\n\nAfter processing of the current instruction is completed, the next\ninstruction is transferred from the IBR to the Instruction Register (IR).\nFrom the IR, the instruction code is sent to the MIM.\n\nThe MIM is implemented as a PLA containing 200 logic product terms.\nThe MIM PLA generates the sequence of microinstructions that provides\noperand address generation, instruction fetch and execution, and\ninterrupt processing.\n\nThe Next Address Register (NAR) is used to transition from the current\nmicroinstruction to the next one. The next address is generated during\nexecution of the current microinstruction and, before execution of the\nnext microinstruction, is copied into the Current Address Register (CAR).\nWhen generating the first microinstruction, the CAR is loaded with the\nstarting address from the Instruction Decoder.\n\nInterrupt codes are supplied from the Interrupt Register to the\nInterrupt Register (INTR). For software interrupts, the INTR is loaded\nunder microprogram control using a special microinstruction format.\n\nA branch condition signal is also applied to the input of the MIM PLA.\nThis signal is generated during execution of branch instructions and in\ncertain special cases.\n\nThe microinstruction code generated by the MIM PLA is written into the\nMicroinstruction Register (MIR). In addition to the microinstruction,\nthe MIM PLA generates a number of control flags. These include the\nsignals \"Accept Interrupt (AI)\", \"Wait State (WS)\", \"End of Instruction\n(EI)\", and several others.",
+      "notes": ""
+    },
+    {
+      "index": 33,
+      "filename": "Страница 032 - 5.5. Блок обработки условий ветвления.jpg",
+      "translation": "The operation of the MCU and its synchronization with other blocks is\ncontrolled by the MCU Synchronization Block (MCU-SYNC).\n\nIf no wait signals are present, the MCU-SYNC is started by the\nOperational Unit Ready (OU Ready) signal.\n\nThe MCU may be halted while waiting for instruction acceptance by the\nEnd of Instruction (EI) signal, while waiting for condition-code\ngeneration by the Wait State (WS) signal, and during processing of\ncertain interrupts by a stall signal from the Interrupt Block (IB)\n(TIB).\n\nDuring execution of a microinstruction, the MCU-SYNC generates the\nMCU Ready signal, which starts the Operational Unit Synchronization\nBlock (OU-SYNC).\n\nIf execution of a microinstruction is delayed, the MCU-SYNC remains\nstopped until the OU Ready signal is received.\n\n5.5. Branch Condition Processing Block\n\nThe structural diagram of the Branch Condition Processing Block (BCPB)\nis shown in Figure 11.\n\nThe BCPB is intended to generate the Branch Control Signal (BCS) used\nto control the MCU on the basis of the instruction operation code and\nthe branch condition flags N, Z, V, and C generated in the Operational\nUnit during instruction execution.\n\nThe BCPB consists of the following blocks and registers:\n    Instruction Register (IR);\n    Processor Status Register (PSR);\n    PLA consisting of two matrices M1 and M2;\n    BCPB Synchronization Block.\n\nThe instruction code (bits 8–15) is loaded into the IR whenever an\ninstruction is received.\n\nAfter completion of each instruction, and during execution of certain\ninstructions, the condition flags N, Z, V, and C are written into the\nPSR.\n\nInformation from these registers is supplied to the input of the first\nPLA matrix.\n\nBased on the instruction code and processor status, the BCPB PLA\ngenerates the branch condition signal.",
+      "notes": ""
+    },
+    {
+      "index": 34,
+      "filename": "Страница 033 - Рис 11. Структурная схема БОВ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 35,
+      "filename": "Страница 034 - 5.6. Блок прерываний.jpg",
+      "translation": "The operation of the Branch Condition Processing Block (BCPB) is controlled\nby the BCPB Synchronization Block (BCPB-SYNC).\n\nThe BCPB-SYNC is started whenever any instruction is written into the\nMCU Instruction Register by the SUV signal, and when the \"Wait State\"\ncondition appears, by the PS signal.\n\nIf the branch condition is generated in response to the \"Wait State\"\nsignal, then after completion of the BCPB cycle a KPS signal is generated,\nwhich starts the MCU and removes the stall caused by the \"Wait State\"\ncondition.\n\n5.6. Interrupt Block\nThe structural diagram of the Interrupt Block (IB) is shown in Figure 12.\n\nThe Interrupt Block is used for reception and preliminary processing of\ninterrupt signals. The IB also contains the hardware logic required to\nsupport execution of the RESET instruction.\n\nThe IB consists of the following blocks:\n    Interrupt Source Register (ISR);\n    PLA implemented with matrices M1 and M2;\n    9-bit Counter (CNT);\n    Control Unit (CU);\n    Synchronization Block (IB-SYNC).\n\nAll interrupt signals are applied to the Interrupt Source Register.\n\nWhen executing the WAIT instruction, the \"Wait\" flip-flop in the ISR is\nset under microprogram control using a special microinstruction format.\n\nFrom the ISR, interrupt signals are applied to the inputs of the first\nPLA matrix. An interrupt priority scheme is implemented in the PLA.\n\nEach interrupt has its own priority. If two interrupts are asserted\nsimultaneously, the interrupt with the higher priority is serviced first.\n\nIf bit 7 of the Processor Status Register (PSR) is set to one, external\nnon-fatal interrupts are masked.",
+      "notes": ""
+    },
+    {
+      "index": 36,
+      "filename": "Страница 035 - Рис 12. Структурная схема БПР.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 37,
+      "filename": "Страница 036 - 5.7. Интерфейсный блок.jpg",
+      "translation": "In addition to implementing the interrupt priority scheme, the Interrupt\nBlock PLA generates the Interrupt Vector Address (IVA) for fetching the\ninterrupt vector from the Constant Block of the Operational Unit, and\nthe Interrupt Code (IC), which is used to switch the MCU to the interrupt\nservice microprogram.\n\nA 9-bit counter is used for detecting bus hangs and for generating the\nINIT signal during execution of the RESET instruction.\n\nThe counter is started by the DIN or DOUT signal when monitoring bus\nhang conditions, or under microprogram control during execution of the\nRESET instruction.\n\nThe Control Unit monitors when the counter reaches the required state.\nThe Control Unit also generates a reset signal (returning all processor\nblocks to their initial state) and, in certain cases, a signal that\nstalls the MCU.\n\nOperation of the Interrupt Block is controlled by the Interrupt Block\nSynchronization Unit (IB-SYNC). It is started by the \"AI\" (Accept\nInterrupt) signal from the MCU.\n\nThe IVA and IC codes are written into their respective destination\nregisters by the \"Interrupt Ready\" signal.\n\n5.7. Interface Block\n\nThe structural diagram of the Interface Block (IB) is shown in Figure 13.\n\nThe Interface Block is intended to organize transfers between the\nprocessor and devices on the system bus. The Interface Block also\ncontains the Direct Memory Access (DMA) arbiter.\n\nThe Interface Block consists of the following units:\n    DMA Arbiter (DMAA);\n    Address Output Block (AOB);\n    Data Input/Output Block (DIOB);\n    Microinstruction Exchange Field Decoder (MEFD);\n    Transfer Control Logic (TCL).",
+      "notes": ""
+    },
+    {
+      "index": 38,
+      "filename": "Страница 037 - Рис 13. Структурная схема ИБ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 39,
+      "filename": "Страница 038.jpg",
+      "translation": "The DMA Arbiter is intended to provide Direct Memory Access operation\nfor devices connected to the system bus of a computer built around the\nprocessor.\n\nThe DMA Arbiter monitors incoming DMA requests. After a request is\nreceived, the processor completes the current system bus transaction and\ngrants DMA access. During the DMA cycle, processor operation is halted.\n\nAfter an address has been calculated and written into the Address\nRegister (AR), an exchange request is sent to the Interface Block.\n\nIf the system bus is free, the Address Output Block (AOB) begins\nplacing the address onto the system bus.\n\nAfter the address has been issued, control is transferred to the\nData Input/Output Block (DIOB), and, depending on the microinstruction\nexchange code, a data read cycle, data write cycle, or instruction fetch\ncycle is performed.\n\nIf the exchange is non-addressed (interrupt vector fetch or reading the\nprocessor status register), the exchange request is processed directly\nby the DIOB. In this case, the AOB is not activated.\n\nThe microinstruction exchange code is supplied to the Exchange Field\nDecoder (EFD). This decoder generates signals that determine the type\nof exchange, the direction of transfer, and several auxiliary control\nflags.\n\nSynchronization of the individual Interface Block units and coordination\nbetween the Interface Block and the other processor units is performed\nby the Transfer Control Logic (TCL).\n\nThe TCL receives the signals \"Write Address Register\" (WAR) and\n\"Write Data Register\" (WDR), indicating that the address and data are\nready for output.\n\nIn turn, the TCL generates signals for writing into the Instruction\nBuffer Register (IBR) and Data Register (DR) when instructions or data\nare received from the system bus.\n\nIf data arrival from the system bus is delayed, the TCL generates\nstall signals for the Operational Unit.\n\nThe timing diagrams for external bus transactions are described in the\nnext chapter.",
+      "notes": ""
+    },
+    {
+      "index": 40,
+      "filename": "Страница 039 - 6. Описания функционирования ПРЦ.jpg",
+      "translation": "6. DESCRIPTION OF PROCESSOR OPERATION\n\n6.1. Processor Operation\n\nThe microprocessor is a complete functional module.\n\nIn a computer of minimal configuration, only appropriately organized\nmemory is required for its operation.\n\nHowever, the processor provides means for interface adjustment that make\nit possible to modify interface timing diagrams with the aid of external\ncircuits, adapting them to specific application requirements.\n\nThe processor also provides the possibility of extending the instruction\nset by implementing additional instructions in system (hidden) memory.\n\nThe processor contains facilities for organizing system memory in such a\nway that its address space does not overlap with the addresses of the\ncomputer's main memory.\n\nSystem memory supplements main memory and is accessible only through\nspecial instructions.\n\nThe processor implements an instruction prefetch mechanism.\n\nThe instruction fetch and execution algorithm is arranged so that by the\ntime execution of the current instruction is completed, the next\ninstruction has already been fetched into the Instruction Buffer\nRegister, and fetching of yet another instruction has begun.\n\nNaturally, such prefetching is possible only in linear sections of a\nprogram where no branches occur.\n\nWhen executing branch instructions, and in general any instructions that\nload the Program Counter, the instruction already fetched into the\nInstruction Buffer Register is no longer the instruction expected by the\nprogram.\n\nIn such cases, the correct next instruction is fetched again by hardware.\n\nTo restore the prefetch pipeline, the same instruction prepares...",
+      "notes": ""
+    },
+    {
+      "index": 41,
+      "filename": "Страница 040.jpg",
+      "translation": "To restore the prefetch pipeline, the same instruction prepares the fetching of one more instruction is initiated. Loss of prefetching also occurs when data rather than an instruction is read via the program counter. At the end of an instruction that addresses data through the program counter, prefetching is likewise restored by arranging the reading of the two instructions following the current one.\n\nAn instruction is also refetched when the current instruction modifies the instruction that follows it. After completion of the modification procedure, i.e., the write to the address of the next instruction, the modified instruction is read and executed. The instruction must be fetched again because during execution of the current instruction the next instruction had already been received into the Command Buffer Register (BRK).\n\nEvery instruction received by the processor is written into the BRK, from which it is sent to the Instruction Decoder. The Instruction Decoder is started when an instruction has been received into the BRK and a flag indicating that the previous instruction has completed is set. By the end of the decoder cycle, the instruction is transferred from the BRK to the Instruction Register (RK), the initial address of the microprogram is loaded into the Current Address Register, certain service flags are set, and the PLA of the Microinstruction Memory is started.\n\nThe generated microinstruction is written into the Microinstruction Register (RMK) and is sent to the decoder of the microinstruction read field. After decoding, the Operational Block (OB) is started and the read phase is executed. During execution of the read phase, the write field of the microinstruction is decoded, and after completion of the read phase the write phase is executed.\n\nWhile the Operational Block is running, the Microprogram Control Unit (BMU) generates the next microinstruction. This process of microinstruction generation and execution continues until execution of the instruction is completed.\n\nIn the penultimate microinstruction, the Interrupt Block (BPR) is started. If there is an unmasked interrupt (the corresponding code is supplied to the Interrupt Register of the BMU), the processor switches to the interrupt-handling microprogram of interrupt handling.",
+      "notes": ""
+    },
+    {
+      "index": 42,
+      "filename": "Страница 041 - 6.2. Общие принципы организации интерфейса.jpg",
+      "translation": "\n\nEvery instruction involves access to devices on the system bus. These accesses include fetching the next instruction and reading or writing data. If the exchange field of a microinstruction contains an indication that access to the system bus is required, the Operational Block (OB) generates a bus request signal, which is sent to the Interface Block (IB).\n\nIf the system bus is free, the IB performs the bus transaction. During this time the OB may execute microinstructions that are not related to the exchange operation or that prepare for the next exchange. After processing the current instruction is completed, the processor proceeds to the next instruction, and so on until the end of the program.\n\nThe following sections describe in detail all types of processor exchanges over the system bus.\n\n6.2. General Principles of Interface Organization and Explanation of Timing Diagrams\n\nThe processor uses an asynchronous method for address output and data transfer.\n\nBy driving the SYNC signal low, the processor informs devices on the system bus that an address has been placed on the AD(0:15) lines. The address is not removed and the exchange procedure does not continue until a low level appears on the AR input of the processor.\n\nDuring a data read operation, by driving the DIN signal low, the processor informs external devices that the address output phase has been completed and that it is ready to receive data. The read procedure does not continue until a low level appears on the RPLY input.\n\nThe indication that data reception has completed is the return of the DIN output to the high level.\n\nDuring a write operation, the indication that the processor has placed data on the AD(0:15) lines is the assertion of the signal (low level) on the output DOUT.",
+      "notes": ""
+    },
+    {
+      "index": 43,
+      "filename": "Страница 042.jpg",
+      "translation": "The write operation does not continue until a low level appears on the RPLY signal. The indication that the write operation has completed is the return of the DOUT output of the processor to the high level.\n\nThe processor begins a bus transaction only when the system bus is free. For the processor, the indication that the system bus is free is the presence of high levels on the SACK, AR, and RPLY signals.\n\nIf it is necessary to stop the processor during operation, it is best to use the DMR signal. When this signal is driven low, the processor completes the current bus transaction and then stops. When the DMR signal returns to the high level, the processor resumes execution of the program from the point at which it stopped.\n\nThe DMR, AR, and RPLY signals are synchronized to the processor's internal clock. The internal synchronization signal is available on the CLCO pin. The frequency of the internal synchronization clock is one-half of the external synchronization frequency supplied to the CLCI input.\n\nThe RPLY signal is sampled by the processor during the high phase of the CLCO signal, while the DMR signal is sampled during the low phase of CLCO.\n\nThe AR signal during address output (low level) is sampled during the low phase of CLCO. The transition of AR to the high level is recognized by the processor during the high phase of CLCO.\n\nWhen the processor operates with fast external devices, for example RAM located on the same board as the processor, maximum performance is achieved when generation of the AR and RPLY signals is coordinated with the moments at which they are sampled by the processor.\n\nThe DMR and SACK signals are used only during the direct-memory-access (DMA) control transfer procedure and have little effect on overall system performance.\n\nThe SACK signal is accepted by the processor asynchronously. The end of the SACK signal (high level) is recognized by the processor during the high phase of the CLCO signal.",
+      "notes": ""
+    },
+    {
+      "index": 44,
+      "filename": "Страница 043.jpg",
+      "translation": "The duration of the address output phase during an addressed bus transaction is controlled by the AR signal. To make this phase as short as possible, the AR signal must be driven low no later than 50 ns before the beginning of the positive edge of the CLCO pulse following the pulse during which the SYNC signal is generated. If this requirement is met, the processor, after some delay relative to the transition of AR from high to low, removes the address from the AD pins (placing these pins into the high-impedance state during a read operation).\n\nFor all types of addressed bus transactions, completion of the current bus cycle and transition to the next cycle occur in the same manner. Upon receiving the RPLY signal (low level), the processor performs the read or write operation and removes its DIN, DOUT, and SYNC signals regardless of when the RPLY signal subsequently returns to the high level.\n\nIf, during the current bus cycle, the processor has generated a request for the next bus cycle and there is no DMA request, then the start of the next bus transaction depends only on the state of the AR signal (it is desirable that AR be released before SYNC is removed) and does not depend on the state of the RPLY signal. In this case, the processor will place the address for the next bus cycle on the bus simultaneously with the removal of the SYNC signal.\n\nIf the processor did not generate a request for the next bus transaction during the current bus cycle, or if a DMA request arrived during this time, then the start of the next bus cycle depends not only on the state of AR, but also on the state of the RPLY signal level (either from its own current transaction or from another transaction if DMA occurred). In this case, the beginning of the next bus cycle requires both RPLY and AR to be at the high level.",
+      "notes": ""
+    },
+    {
+      "index": 45,
+      "filename": "Страница 043a.jpg",
+      "translation": "Also, if the AR signal is released later than one CLCO period after the removal of the SYNC signal, then the next bus transaction will begin only after both AR and RPLY have returned to the high level.\n\nAfter the interrupt vector address reception procedure, the start of the processor’s next cycle unconditionally depends on the states of the AR and RPLY signals. To delay the restart of the processor, it is recommended to use only the AR signal. During interrupt vector address reception, the AR signal may be generated from the RPLY signal.\n\nIf the processor exchanges data with slow external devices, the timing diagram of the processor interface signals can be modified by means of external circuitry. In this case, permission to begin the next bus cycle must be supplied to the processor by means of ...\n\n[Handwritten note]\n\nWhen operating with fast memory at a high clock frequency, the following is recommended to achieve maximum performance:\n\nWhen reading instructions or data, immediately remove the RPLY signal as soon as the DIN signal is removed during the low phase of the CLCO signal; otherwise, in the subsequent addressed transaction there will be a delay in asserting DIN for an address read cycle or a delay in outputting data during a write cycle.\n\nThe processor reaction time to removal of the RPLY signal does not exceed 1.5·TCLCO, provided that the RPLY signal is removed no later than the beginning of the high phase of the CLCO signal.",
+      "notes": ""
+    },
+    {
+      "index": 46,
+      "filename": "Страница 044 - 6.3. Безадресное чтение.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 47,
+      "filename": "Страница 045 - Рис 14. Процедура 'безадресное чтение'.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 48,
+      "filename": "Страница 046 - 6.4. Адресное чтение.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 49,
+      "filename": "Страница 047 - Рис 15. Процедура адресное чтение.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 50,
+      "filename": "Страница 048 - 6.5. Запись.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 51,
+      "filename": "Страница 049 - Рис 16. Процедура записи.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 52,
+      "filename": "Страница 050 - 6.6. Чтение-модификация-запись.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 53,
+      "filename": "Страница 051 - Рис 17. Процедура 'чтение-модификация-запись'.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 54,
+      "filename": "Страница 052 - 6.7. Прием адреса вектора прерывания.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 55,
+      "filename": "Страница 053 - Рис 18. Процедура приема адреса вектора прерывания.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 56,
+      "filename": "Страница 054 - 6.8. Предоставление прямого доступа к памяти.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 57,
+      "filename": "Страница 055 - Рис 19. Передача управления магистралью по запросу ПДП.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 58,
+      "filename": "Страница 056 - 6.9. Значение времен задержек сигналов системной магистрали.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 59,
+      "filename": "Страница 057 - Таблица 3. Значение времен задержек сигналов СМ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 60,
+      "filename": "Страница 058.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 61,
+      "filename": "Страница 059 - 7. Инициирование ПРЦ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 62,
+      "filename": "Страница 060 - Рис 20. Диаграмма сигналов при включении питания.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 63,
+      "filename": "Страница 061.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 64,
+      "filename": "Страница 062 - 8. Слово состояния ПРЦ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 65,
+      "filename": "Страница 063 - Рис 21. Формат ССП.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 66,
+      "filename": "Страница 064.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 67,
+      "filename": "Страница 065 - Таблица 4. Переключение режимов процессора.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 68,
+      "filename": "Страница 066.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 69,
+      "filename": "Страница 067 - 9. Описание системы команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 70,
+      "filename": "Страница 068 - 9.2. Формат одноадресных команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 71,
+      "filename": "Страница 069 - 9.3. Формат двухадресных команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 72,
+      "filename": "Страница 070 - Таблица 5. Примеры методов адресации .jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 73,
+      "filename": "Страница 071 - Рис 22. Методы прямой адресации.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 74,
+      "filename": "Страница 072.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 75,
+      "filename": "Страница 073.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 76,
+      "filename": "Страница 074.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 77,
+      "filename": "Страница 075.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 78,
+      "filename": "Страница 076.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 79,
+      "filename": "Страница 077 - 9.4.2. Методы косвенной адресации.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 80,
+      "filename": "Страница 078 - Рис 23. Методы косвенной адресации.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 81,
+      "filename": "Страница 079 - 9.4.3. Использование СК в качестве РОН.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 82,
+      "filename": "Страница 080 - Таблица 6. Методы адресации по СК.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 83,
+      "filename": "Страница 081.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 84,
+      "filename": "Страница 082.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 85,
+      "filename": "Страница 083 - 9.4.4. Использование указателя стека в качестве РОН.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 86,
+      "filename": "Страница 084 - 9.5. Выполнение команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 87,
+      "filename": "Страница 085 - 9.5.1. Форматы команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 88,
+      "filename": "Страница 086.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 89,
+      "filename": "Страница 087 - 9.5.2. Выполнение байтовых команд. CLR, CLRB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 90,
+      "filename": "Страница 088 - COM, COMB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 91,
+      "filename": "Страница 089 - INC, INCB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 92,
+      "filename": "Страница 090 - DEC, DECB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 93,
+      "filename": "Страница 091 - NEG, NEGB, TST, TSTB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 94,
+      "filename": "Страница 092.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 95,
+      "filename": "Страница 093 - ASR, ASRB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 96,
+      "filename": "Страница 094 - ASL, ASLB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 97,
+      "filename": "Страница 095 - ROR, RORB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 98,
+      "filename": "Страница 096.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 99,
+      "filename": "Страница 097 - ROL, ROLB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 100,
+      "filename": "Страница 098 - ADC, ADCB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 101,
+      "filename": "Страница 099 - SBC, SBCB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 102,
+      "filename": "Страница 100 - SXT.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 103,
+      "filename": "Страница 101 - SWAB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 104,
+      "filename": "Страница 102 - MFPS.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 105,
+      "filename": "Страница 103 - MTPS.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 106,
+      "filename": "Страница 104 - 9.5.4. Двухадресные команды. MOV, MOVB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 107,
+      "filename": "Страница 105 - CMP, CMPB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 108,
+      "filename": "Страница 106 - ADD.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 109,
+      "filename": "Страница 107 - SUB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 110,
+      "filename": "Страница 108 - BIT, BITB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 111,
+      "filename": "Страница 109 - BIC, BICB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 112,
+      "filename": "Страница 110 - BIS, BISB.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 113,
+      "filename": "Страница 111 - XOR.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 114,
+      "filename": "Страница 112 - 9.5.5. Команды управления программой.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 115,
+      "filename": "Страница 113 - BR.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 116,
+      "filename": "Страница 114 - BEQ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 117,
+      "filename": "Страница 115 - BPL, BMI.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 118,
+      "filename": "Страница 116 - BVC, BVS.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 119,
+      "filename": "Страница 117 - BCC, BCS.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 120,
+      "filename": "Страница 118.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 121,
+      "filename": "Страница 119 - BGE, BLT.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 122,
+      "filename": "Страница 120 - BGT, BLE.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 123,
+      "filename": "Страница 121 - BHI, BLOS.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 124,
+      "filename": "Страница 122 - BHIS, BLO, JMP.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 125,
+      "filename": "Страница 123.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 126,
+      "filename": "Страница 124 - JSR.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 127,
+      "filename": "Страница 125 - RTS.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 128,
+      "filename": "Страница 126 - MARK.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 129,
+      "filename": "Страница 127.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 130,
+      "filename": "Страница 128 - SOB. 9.5.6. Команды прерывания программы.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 131,
+      "filename": "Страница 129 - EMT, TRAP.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 132,
+      "filename": "Страница 130 - IOT.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 133,
+      "filename": "Страница 131 - BPT, RTI.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 134,
+      "filename": "Страница 132 - RTT. 9.5.7. Специальные команды. HALT.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 135,
+      "filename": "Страница 133 - WAIT.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 136,
+      "filename": "Страница 134 - RESET.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 137,
+      "filename": "Страница 135 - 9.5.8. Команды изменения признаков.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 138,
+      "filename": "Страница 136 - MUL.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 139,
+      "filename": "Страница 137.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 140,
+      "filename": "Страница 138 - DIV.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 141,
+      "filename": "Страница 139 - ASH.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 142,
+      "filename": "Страница 140 - ASHC.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 143,
+      "filename": "Страница 141.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 144,
+      "filename": "Страница 142 - 9.6. Описание специальных команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 145,
+      "filename": "Страница 143 - 9.7. Специальная группа команд режима 'HALT'. ПУСК, ШАГ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 146,
+      "filename": "Страница 144 - 9.7.3. ЧПТ, ЧЧП, ЧКСК, ЧКСП.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 147,
+      "filename": "Страница 145 - 9.7.7. ЗЧП, ЧКСК, ЗКСП.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 148,
+      "filename": "Страница 146 - Таблица 7. Времена выполнения основных типов команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 149,
+      "filename": "Страница 147 - 10. Прерывания ПРЦ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 150,
+      "filename": "Страница 148 - 10.6. Прерывание по резервной команде.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 151,
+      "filename": "Страница 149.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 152,
+      "filename": "Страница 150 - 10.10. Поведение ПРЦ при сбое питания.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 153,
+      "filename": "Страница 151 - Рис 24. Диаграмы сигналов ACLO, DCLO при сбое питания.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 154,
+      "filename": "Страница 152 - 10.12. Приоритеты источников прерываний.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 155,
+      "filename": "Страница 153 - Рис 25. Условная схема процедуры прерывания.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 156,
+      "filename": "Страница 154 - Таблица 8. Маскирование прерываний.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 157,
+      "filename": "Страница 155 - 10.14. Вектора прерываний.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 158,
+      "filename": "Страница 156 - Таблица 9. Вектора прерываний.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 159,
+      "filename": "Страница 157 - 11. Особенности выполнения некоторых команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 160,
+      "filename": "Страница 158 - 11.6. Длительность импульса INT.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 161,
+      "filename": "Страница 159 - 12. Применение микросхемы К1801ВМ2.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 162,
+      "filename": "Страница 160 - Рис 26. Схема разделения скорости обмена по СМ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 163,
+      "filename": "Страница 161 - Приложение 1. Условные обозначения и сокращения.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 164,
+      "filename": "Страница 162.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 165,
+      "filename": "Страница 163.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 166,
+      "filename": "Страница 164 - Приложение 2. Система команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 167,
+      "filename": "Страница 165.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 168,
+      "filename": "Страница 166.jpg",
+      "translation": "",
+      "notes": ""
+    }
+  ]
+}
