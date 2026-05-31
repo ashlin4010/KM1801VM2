@@ -1,7 +1,7 @@
 {
   "version": 3,
   "folder": "КМ1801ВМ2 - Technical Description - Part 1",
-  "saved": "2026-05-30T07:12:07.827Z",
+  "saved": "2026-05-31T04:37:37.780Z",
   "pages": [
     {
       "index": 1,
@@ -72,8 +72,8 @@
     {
       "index": 12,
       "filename": "Страница 011 - 4. Описание выводов ПРЦ.jpg",
-      "translation": "4. DESCRIPTION OF CPU PINS\n\nThe electrical circuits of the CPU input and output elements are shown in\nFigures 2–6. The designations and names of the pins are given in Table 2.\n\nPins 09–02, 39–32 — AD (0–15)\n\nSixteen input/output lines of the system bus multiplexed for addresses and\ndata. They are intended for transmitting and receiving addresses and data.\nThe use of the same pins for both address and data transfer is achieved by\ntime multiplexing. A low signal level on these pins corresponds to the\ntransmission of a logical one.\n\nPin 10 - Reserved output.\nPin 11 - Reserved input.\n\nPin 12 — \"DMR\"\nDMA request signal input. This signal (active low) is asserted by an external\ndevice on the system bus to indicate that it requires direct access to memory.\n\nPin 13 — \"SACK\"\nDMA grant acknowledge signal input. This signal (active low) is asserted by\nthe device that requested DMA after it receives the DMA grant signal and\nindicates that bus control has been transferred to that device.\n\nPin 14 — \"DMGO\"\nDMA grant signal output. This signal (active low) is asserted by the CPU in\nresponse to receipt of the DMR signal, indicating that direct memory access\nhas been granted.",
-      "notes": ""
+      "translation": "4. DESCRIPTION OF CPU PINS\n\nThe electrical circuits of the CPU input and output elements are shown in\nFigures 2–6. The designations and names of the pins are given in Table 2.\n\nPins 09–02, 39–32 — AD (0–15)\n\nSixteen input/output lines of the system bus multiplexed for addresses and\ndata. They are intended for transmitting and receiving addresses and data.\nThe use of the same pins for both address and data transfer is achieved by\ntime multiplexing. A low signal level on these pins corresponds to the\ntransmission of a logical one.\n\nPin 10 - Reserved output. (Window request)\nPin 11 - Reserved input. (Window enable)\n\nPin 12 — \"DMR\"\nDMA request signal input. This signal (active low) is asserted by an external\ndevice on the system bus to indicate that it requires direct access to memory.\n\nPin 13 — \"SACK\"\nDMA grant acknowledge signal input. This signal (active low) is asserted by\nthe device that requested DMA after it receives the DMA grant signal and\nindicates that bus control has been transferred to that device.\n\nPin 14 — \"DMGO\"\nDMA grant signal output. This signal (active low) is asserted by the CPU in\nresponse to receipt of the DMR signal, indicating that direct memory access\nhas been granted.",
+      "notes": "Given the VM2 context, I suspect \"окно\" (window) refers to the special 17th-address-bit address-space extension (\"window\" into system ROM) discussed elsewhere in the architecture manual."
     },
     {
       "index": 13,
@@ -270,14 +270,14 @@
     {
       "index": 45,
       "filename": "Страница 043a.jpg",
-      "translation": "Also, if the AR signal is released later than one CLCO period after the removal of the SYNC signal, then the next bus transaction will begin only after both AR and RPLY have returned to the high level.\n\nAfter the interrupt vector address reception procedure, the start of the processor’s next cycle unconditionally depends on the states of the AR and RPLY signals. To delay the restart of the processor, it is recommended to use only the AR signal. During interrupt vector address reception, the AR signal may be generated from the RPLY signal.\n\nIf the processor exchanges data with slow external devices, the timing diagram of the processor interface signals can be modified by means of external circuitry. In this case, permission to begin the next bus cycle must be supplied to the processor by means of ...\n\n[Handwritten note]\n\nWhen operating with fast memory at a high clock frequency, the following is recommended to achieve maximum performance:\n\nWhen reading instructions or data, immediately remove the RPLY signal as soon as the DIN signal is removed during the low phase of the CLCO signal; otherwise, in the subsequent addressed transaction there will be a delay in asserting DIN for an address read cycle or a delay in outputting data during a write cycle.\n\nThe processor reaction time to removal of the RPLY signal does not exceed 1.5·TCLCO, provided that the RPLY signal is removed no later than the beginning of the high phase of the CLCO signal.",
+      "translation": "Also, if the AR signal is released later than one CLCO period after the removal of the SYNC signal, then the next bus transaction will begin only after both AR and RPLY have returned to the high level.\n\nAfter the interrupt vector address reception procedure, the start of the processor’s next cycle unconditionally depends on the states of the AR and RPLY signals. To delay the restart of the processor, it is recommended to use only the AR signal. During interrupt vector address reception, the AR signal may be generated from the RPLY signal.\n\nIf the processor exchanges data with slow external devices, the timing diagram of the processor interface signals can be modified by means of external circuitry. In this case, permission to begin the next bus cycle must be supplied to the processor by means of the AR signal (high level).\n\n[Handwritten note]\n\nWhen operating with fast memory at a high clock frequency, the following is recommended to achieve maximum performance:\n\nWhen reading instructions or data, immediately remove the RPLY signal as soon as the DIN signal is removed during the low phase of the CLCO signal; otherwise, in the subsequent addressed transaction there will be a delay in asserting DIN for an address read cycle or a delay in outputting data during a write cycle.\n\nThe processor reaction time to removal of the RPLY signal does not exceed 1.5·TCLCO, provided that the RPLY signal is removed no later than the beginning of the high phase of the CLCO signal.",
       "notes": ""
     },
     {
       "index": 46,
       "filename": "Страница 044 - 6.3. Безадресное чтение.jpg",
-      "translation": "",
-      "notes": ""
+      "translation": "In the timing diagrams all signals are shown with respect to the microprocessor pins. Signal delays are measured from the midpoint of the logic transition (1.2 V) of the CLCO signal to the point at which the signal reaches:\n\n    low level   — for a falling edge,\n    high level  — for a rising edge.\n\nThe timing diagrams are mainly given for operation with fast external devices (maximum performance).\n\n6.3. Non-addressed Read\nThe processor has a special synchronous exchange procedure — non-addressed read — shown in Fig. 14. It is executed by microprogram during power-up to read the initial conditions, and by the special command CPT (000020).\n\nIf during the previous exchange cycle the AR and RPLY signals were released before the removal of the SYNC signal, then during a non-addressed read, after one CLCO period, the processor asserts the DIN and SEL signals.\n\nThe SYNC signal remains at the high level during this procedure.\n\nSimultaneously with the assertion of DIN and SEL, the AD(0:15) pins are switched to input mode; that is, the processor removes its active drive from them.\n\nDuring the non-addressed read procedure the RPLY signal is not used.\n\nThe duration of the low-level phase of the DIN and SEL signals is always 1.5T (hereafter throughout the text, the period of the signal at the CLCO output will be denoted by \"T\").\n\nTo ensure reliable reception of information, the slave device must place data on the AD(0:15) lines of the processor no later than 3/2 T after the edge of the CLCO edge at which DIN and SEL were asserted.",
+      "notes": "The command rendered as \"CPT (000020)\" is actually the Russian mnemonic ЧПТ, which corresponds to the PDP-11 RESET trap/initialization mechanism described by Soviet documentation. It is not a standard PDP-11 instruction mnemonic."
     },
     {
       "index": 47,
@@ -288,7 +288,7 @@
     {
       "index": 48,
       "filename": "Страница 046 - 6.4. Адресное чтение.jpg",
-      "translation": "",
+      "translation": "After DIN and SEL are removed, after 0.5T the processor drives the AD(0:15) pins to the active high level (or places an address on them). By this time the slave device must remove its data from the AD(0:15) pins.\n\nIf, during execution of a non-addressed read and within 0.5T after its completion (removal of DIN and SEL), no DMA request appears on the DMR input, then the processor, after driving the AD(0:15) pins to the active high level, places on those pins the address for the next exchange cycle.\n\n6.4. Addressed Read\n\nThe \"addressed read\" procedure (Fig. 15) is used for reading data from a memory location or from a register of an external device.\n\nAfter completing address output, the processor asserts the DIN signal low. Simultaneously, the AD(0:15) pins are switched to input mode, just as in the non-addressed read procedure.\n\nIf a low level does not appear on the RPLY input within 64T, the processor clears (returns high) the SYNC and DIN signals and proceeds to processing a bus error interrupt (timeout).\n\nIf the RPLY signal arrives in time, the processor performs the data read and clears the DIN and SYNC signals.\n\nTo minimize the time between assertion of RPLY and removal of DIN, the RPLY signal should be asserted during the first two-thirds of the high phase of the CLCO signal.\n\nTo ensure reliable reception, data must be placed on the AD(0:15) pins no later than 2/3T after assertion of the RPLY signal, and must not be removed before the DIN signal is removed.\n\n0.5T after removal of the DIN signal, the processor drives the AD(0:15) pins to the active high level (or places an address on them) and clears the SYNC signal.\n\nBy this time the slave device must remove its data from the AD(0:15) pins.",
       "notes": ""
     },
     {
@@ -300,7 +300,7 @@
     {
       "index": 50,
       "filename": "Страница 048 - 6.5. Запись.jpg",
-      "translation": "",
+      "translation": "If the AR and RPLY signals were removed before the SYNC signal was removed, and there was no DMA request, then after removal of the SYNC signal the processor places the address for the next bus cycle on the bus.\n\nThe WTBT signal remains at the high level throughout the entire addressed-read cycle.\n\nIf an addressed read is being performed from system (\"hidden\") memory, the SEL signal is asserted low during the address output phase. In time, it coincides with the signals on the AD(0:15) pins.\n\n6.5. Write\nThe write procedure (Fig. 16) is used to write data to a memory location or to a register of an external device.\n\nThe address output phase during a write is the same as for all addressed bus transactions.\n\nAfter completion of address output, the signal on the AD(0:15) pins transitions to the active high level and, depending on the addressing type, after 0.5T or 1.5T the processor places data on the AD(0:15) pins.\n\n1T after the data is placed on the bus, the DOUT signal is asserted low.\n\nAfter a low level appears on the RPLY input, the processor completes the write procedure by first removing the DOUT signal, then 0.5T later removing the data from the AD(0:15) pins, and another 0.5T later removing the SYNC signal.\n\nIf no RPLY signal arrives within 64T after assertion of DOUT, the processor removes DOUT, SYNC, and the data from the AD(0:15) pins, and proceeds to bus timeout (hang) error processing.\n\nTo minimize the interval between the arrival of the RPLY signal and removal of the DOUT signal, the RPLY signal should be asserted during the first two-thirds of the high phase of the CLCO signal.\n\nIf the RPLY and AR signals were removed before the removal of the SYNC signal and there there was no DMA request, then 0.5T after the data is removed the processor places on the AD(0:15) pins the address for the next bus cycle.",
       "notes": ""
     },
     {
@@ -312,7 +312,7 @@
     {
       "index": 52,
       "filename": "Страница 050 - 6.6. Чтение-модификация-запись.jpg",
-      "translation": "",
+      "translation": "In the write procedure, during the address output phase, the WTBT signal is asserted low.\n\nAlso, the SEL signal is asserted low during the address output phase when a write to system (hidden) memory is being performed.\n\nDuring the data output phase, the WTBT signal is asserted low if a byte write is being performed, and high if a word write is being performed.\n\nIn time, the WTBT signal coincides with the signals on the AD(0:15) pins.\n\n6.6. Read–Modify–Write\n\nThe processor includes a procedure that allows an operand to be read from an address, an operation to be performed on it, and the result to be written back to the same address.\n\nThis procedure is called read–modify–write (Fig. 17).\n\nIt consists of three phases:\n    - address output phase,\n    - read phase,\n    - write phase.\n\nExecution of the address output phase is the same as for any addressed bus transaction.\n\nThe read phase is performed in the same manner as an addressed read, except that after the DIN signal is removed, the SYNC signal is not removed.\n\nThe processor processes the received data and proceeds to execution of the write phase.\n\nHowever, the write phase begins only after the RPLY signal asserted during the read phase has been removed.\n\nThe minimum interval between removal of the DIN signal and assertion of data on the AD(0:15) pins during the write phase is 2T.\n\nTo avoid delaying execution of the exchange procedure, the RPLY signal should be returned to the high level within this interval.\n\nExecution of the write phase, completion of the bus cycle, and transition to the next cycle are exactly the same as for a normal write operation.\n\nThe WTBT signal is asserted high during the address output phase and during the read phase.",
       "notes": ""
     },
     {
@@ -324,7 +324,7 @@
     {
       "index": 54,
       "filename": "Страница 052 - 6.7. Прием адреса вектора прерывания.jpg",
-      "translation": "",
+      "translation": "During the write phase this signal is asserted high when writing a word and low when writing a byte.\n\nThe state of the AR signal does not affect the transition from the read phase to the write phase. Removal of this signal affects only the start of the next bus cycle.\n\nAs in the addressed read and write procedures, the SEL signal is asserted low during the address output phase when the exchange is performed with system (hidden) memory.\n\n6.7. Interrupt Vector Address Reception\n\nThe processor has a special type of non-addressed exchange — interrupt vector address reception (Fig. 18).\n\nThis procedure is a component part of vector interrupt processing initiated by the VIRQ signal.\n\nWhen an interrupt request arrives on the VIRQ input (low level), if the interrupt is not masked and the bus is free, the processor begins the interrupt processing procedure.\n\nThe contents of the program counter and the processor status register are pushed onto the stack, and the processor begins reading the interrupt vector address.\n\nThe DIN signal is asserted, and 1T later the interrupt grant signal IAKO is asserted.\n\nThe processor waits for the arrival of the RPLY signal.\n\nHere, as in a normal read cycle, the arrival time of RPLY is monitored relative to the assertion of DIN.\n\nIf this time exceeds 64T, the processor enters bus-timeout interrupt processing.\n\nAfter receiving the RPLY signal, the processor performs the read operation and removes DIN.\n\nThe requirements for data validity relative to RPLY and for data removal relative to DIN are the same as for addressed reads.\n\nThe SYNC, WTBT, and SEL signals remain at the high level during the interrupt-vector-address reception cycle.\n\nSince the AR signal is not used in this procedure, the start time of the duration of the bus cycle is determined by the time at which the RPLY signal is removed.",
       "notes": ""
     },
     {
@@ -336,7 +336,7 @@
     {
       "index": 56,
       "filename": "Страница 054 - 6.8. Предоставление прямого доступа к памяти.jpg",
-      "translation": "",
+      "translation": "To make the interval between removal of DIN and the beginning of address output in the next bus cycle as short as possible, the RPLY signal must be removed no later than 1/2T after removal of the IAKO signal.\n\n6.8. Granting Direct Memory Access\n\nThe processor contains a direct-memory-access (DMA) arbiter.\n\nPermission for direct memory access (Fig. 19) may be granted after any processor bus cycle, regardless of its type, including during interrupt processing.\n\nThe DMA request signal on the DMR pin is sampled by the processor during the low phase of the CLC0 signal.\n\nThe DMA grant signal is output on the DMGO pin during the low phase of the CLC0 signal.\n\nTo avoid unnecessary delays in servicing DMA requests, the DMR signal should be asserted at the beginning of the low phase of CLC0.\n\nThen, if the processor is not performing a bus transaction at the moment the DMR signal arrives, after CLC0 transitions to the low level a DMA grant will be asserted on the DMGO output.\n\nIf, at the moment the DMR signal arrives, the processor has already started a bus transaction, i.e., has already output an address during an addressed cycle or has asserted DIN during a non-addressed cycle, it completes that transaction and grants DMA only after the transaction is finished.\n\nIn this case the DMGO signal is asserted simultaneously with the removal of the DIN signal during a read procedure, or simultaneously with the removal of data during write and read-modify-write procedures.",
       "notes": ""
     },
     {
@@ -348,7 +348,7 @@
     {
       "index": 58,
       "filename": "Страница 056 - 6.9. Значение времен задержек сигналов системной магистрали.jpg",
-      "translation": "",
+      "translation": "After receiving the DMGO signal, the device that requested DMA must first assert the SACK signal and then remove the DMR signal. It is recommended that DMR be removed upon receipt of DMGO.\n\nThe SACK signal is accepted by the processor asynchronously, regardless of the phase of the CLC0 signal. During the low phase of CLC0, the processor removes the DMGO signal.\n\nThe SACK signal places the SYNC, DIN, DOUT, WTBT, and AD(0:15) outputs into the disconnected state (high-impedance state).\n\nTo return these outputs to the active state, it is necessary to remove not only the SACK signal, but also the RPLY and AR signals.\n\nThe device that requested DMA must indicate that the system bus has been released by means of the AR signal.\n\nIf AR is removed at the beginning of the positive edge of the CLC0 pulse, then during that phase of the CLC0 pulse the processor will begin outputting the address for the next bus transaction.\n\n6.9. Values of System Bus Signal Delays\n\nThe timing values of signal delays on the system bus during bus transactions (Figs. 14–19) are given in Table 3.\n\n[Handwritten Note]\nMicrocircuits manufactured at different times may have different delay values within the limits specified in Table 3. However, for a particular microcircuit, deviations toward either maximum or minimum values will be identical for all signal delays.",
       "notes": ""
     },
     {
@@ -366,7 +366,7 @@
     {
       "index": 61,
       "filename": "Страница 059 - 7. Инициирование ПРЦ.jpg",
-      "translation": "",
+      "translation": "7. PROCESSOR INITIALIZATION\n\nTo initialize the processor chip, it is necessary, simultaneously with the appearance of the supply voltage (+5 V), to generate a specific sequence of signals: power-fail (DCLO) and AC power-fail (ACLO). Three phases are distinguished in this sequence (Fig. 20).\n\nThe first phase is the initial chip reset:\nthe processor control units are reset to their initial state; the processor drives the INIT output low.\n\nThe second phase is waiting for the removal of the AC power-fail signal.\nThe processor terminates the low-level signal on the INIT output.\n\nThe third phase is execution of the initialization microprogram.\n\nAfter removal of the ACLO signal, the processor executes the following sequence of microcommands:\n\n1) Reads data from an external register using the non-addressed read procedure (SEL);\n\n2) Forms the bootstrap vector address:\n\n   BVA(15:8) := SEL(15:8)\n   BVA(7:0)  := 0\n\n3) Loads the program counter with the contents of the memory location at the bootstrap vector address:\n\n   R7 := (BVA)\n\n4) Loads the processor status register with the contents of the memory location at the bootstrap vector address plus 2:\n\n   PSW := (BVA + 2)\n\n5) Examines the state of the interrupt sources;",
       "notes": ""
     },
     {
@@ -378,13 +378,13 @@
     {
       "index": 63,
       "filename": "Страница 061.jpg",
-      "translation": "",
+      "translation": "6) If a condition exists for a permitted interrupt, the processor proceeds to execute the interrupt-service microprogram;\n\n7) If there are no interrupts, or if they are masked, the processor proceeds to fetch instruction opcodes and execute them.",
       "notes": ""
     },
     {
       "index": 64,
       "filename": "Страница 062 - 8. Слово состояния ПРЦ.jpg",
-      "translation": "",
+      "translation": "8. PROCESSOR STATUS WORD\n\nThe Processor Status Word (PSW) contains information about the current state of the processor. This includes information about the current processor priority, the values of the branch condition codes, which depend on the results of instruction execution, and the state of the T bit, used during program debugging and causing a program interrupt. Figure 21 shows the format of the PSW.\n\nThe processor priority bit (bit 7 of the PSW) may be in state \"0\" or \"1\". In the latter case, external devices cannot interrupt the currently executing program. To permit a program interrupt request to be accepted, PSW bit 7 must be equal to \"0\".\n\nThe branch condition codes contain information about the result of the last instruction executed by the processor. All arithmetic and logical instructions update these codes appropriately. Individual bits are set in the following cases:\n\n    Z = 1, if the result is equal to 0;\n\n    N = 1, if the result is negative;\n\n    C = 1, if execution of the instruction produced a carry out of the most significant bit, or if during a left or right shift a 1 was shifted out of the least significant or most significant bit;\n\n    V = 1, if arithmetic overflow occurred during execution of the operation.\n\nWhen a new Processor Status Word is loaded, the T bit may be set or cleared. If it is set, then upon completion of execution of the current instruction, an interrupt will be generated",
       "notes": ""
     },
     {
@@ -396,7 +396,7 @@
     {
       "index": 66,
       "filename": "Страница 064.jpg",
-      "translation": "",
+      "translation": "\n\nUse of the T bit is especially effective in debugging programs, for organizing an execution mode in which execution of user-selected instructions causes a program interrupt and a transfer to a monitor/operator communication program. This allows the user to perform the necessary actions.\n\nTo provide special execution conditions for fatal-condition handlers and to implement console-terminal directives, a special program execution mode called HALT has been introduced in the processor (as distinct from the normal USER execution mode).\n\nThe indication that the processor is in HALT mode is that bit 8 of the PSW is equal to one.\n\n        PSW(8)      Mode\n\n           0        USER\n           1        HALT\n\nMode switching during PSW loading is shown in Table 4.\n\nTo separate the address spaces of USER and HALT modes, address bit 17 has been introduced in the processor. This bit reflects the state of PSW(8).\n\nIn HALT mode, during address output onto the bus, an active signal appears on the SEL output, indicating an access to the HALT-mode address space.\n\nIn power-up situations, fatal conditions, or execution of the HALT instruction (processing of the HALT signal), after the current values of the PC and PSW have been loaded into the processor's shadow-copy registers, HALT mode is forcibly established (PSW(8) is set to \"1\") so that it becomes possible to load new values of the PC and PSW from the HALT-mode address space.",
       "notes": ""
     },
     {
@@ -408,25 +408,25 @@
     {
       "index": 68,
       "filename": "Страница 066.jpg",
-      "translation": "",
+      "translation": "However, the processor's final operating mode in this case is determined by the value of PSW(8) loaded from memory at the vector address.",
       "notes": ""
     },
     {
       "index": 69,
       "filename": "Страница 067 - 9. Описание системы команд.jpg",
-      "translation": "",
+      "translation": "9. INSTRUCTION SET DESCRIPTION\n\n9.1. The CPU uses three types of instructions: zero-address, one-address,\nand two-address instructions. In zero-address instructions, the instruction\ncode contains only the operation code. The encodings of one-address and\ntwo-address instructions usually contain information that specifies:\n\n- the function to be performed (operation code);\n\n- the general-purpose registers used in selecting operands;\n\n- the addressing method (the way the selected GPR is used).\n\nSince most of the information processed by a computer consists of data\norganized into arrays, lists, character streams, etc., the CPU was designed\nwith provisions for efficient processing of structured data.\n\nGeneral-purpose registers may be used:\n\n- as accumulators (the data being processed is stored in the registers);\n\n- as address pointers (the register contains the address of an operand\n  rather than the operand itself);\n\n- as address pointers whose contents are automatically modified by a\n  specified increment, allowing access to sequentially located memory\n  cells. Automatic increment of the address pointer when accessing\n  successive memory locations is called autoincrement addressing.\n  Automatic decrement of the pointer contents when accessing successive\n  memory locations is called autodecrement addressing. These methods\n  may be used when processing tabulated data;",
       "notes": ""
     },
     {
       "index": 70,
       "filename": "Страница 068 - 9.2. Формат одноадресных команд.jpg",
-      "translation": "",
+      "translation": "- as index registers, whose contents are added to an index word in order\n  to calculate the operand address, allowing access to various elements\n  of a list.\n\nThe use of autoincrement and autodecrement addressing modes makes it\npossible to organize stack memory. Any general-purpose register may be\nused by software as a stack pointer; however, certain instructions\n(used during interrupt servicing and during subroutine calls and\nreturns) automatically use GPR R6 as the hardware stack pointer.\n\n9.2. Format of One-Address Instructions\n\nThe format of one-address instructions (such as clear, test, etc.) is\nas follows:\n\n     15          6 5     3 2     0\n    +-------------+-------+-------+\n    |   OPCODE    | MODE  | GPR   |\n    +-------------+-------+-------+\n\nBits 15:6 contain the operation code, which determines the instruction\nto be executed.\n\nBits 5:0 form a six-bit field called the destination operand addressing\nfield, which in turn consists of two subfields:\n\n1) Bits 2:0 select one of the eight general-purpose registers (GPRs)\n   used by the instruction;\n\n2) Bits 5:3 determine the method of using the selected register\n   (the addressing mode). In addition, bit 3 determines whether the\n   addressing is direct or indirect.",
       "notes": ""
     },
     {
       "index": 71,
       "filename": "Страница 069 - 9.3. Формат двухадресных команд.jpg",
-      "translation": "",
+      "translation": "9.3. Format of Two-Address Instructions\n\nOperations involving two operands (such as addition, transfer, and\ncomparison) are performed using instructions that contain two addresses.\nThe values placed in the addressing fields of the first and second\noperands determine the addressing modes and the general-purpose\nregisters used. The format of a two-address instruction is as follows:\n\n     15      12 11    9 8     6 5     3 2     0\n    +----------+--------+-------+--------+-------+\n    |  OPCODE  | MODE   | GPR   | MODE   | GPR   |\n    +----------+--------+-------+--------+-------+\n                  Source Operand      Destination Operand\n                  Addressing Field    Addressing Field\n\nThe source operand addressing field is used to select the source\noperand. The destination operand addressing field is used to select the\ndestination operand and to store the result.\n\nFor example, in the instruction\n\n    ADD A, B\n\nthe contents of location A (the source operand) are added to the\ncontents of location B (the destination operand). After execution of\nthe addition operation, location B will contain the result of the\noperation, while the contents of location A remain unchanged.\n\n9.4. Addressing Modes\n\nIn the examples of this subsection describing the addressing modes,\nthe following instructions from Table 5 are used:",
       "notes": ""
     },
     {
@@ -474,7 +474,7 @@
     {
       "index": 79,
       "filename": "Страница 077 - 9.4.2. Методы косвенной адресации.jpg",
-      "translation": "",
+      "translation": "9.4.2. Indirect Addressing Modes\n\nThe four basic addressing modes may also be used with indirect\naddressing. If, in the register mode, the operand is the contents of\nthe selected register, then in the register-indirect mode the contents\nof the selected register are the address of the operand. In the other\nthree indirect modes, the contents of the register are used to select\nthe address of the operand rather than the operand itself. These modes\nare used when a table contains addresses rather than operands.\n\nFigure 23 shows the sequences of operations performed by an instruction\nusing each of the four indirect addressing modes.\n\nExample of the register-indirect addressing mode (Mode 1)\n\nSymbolic form      Octal code      Instruction name\n\nCLR @R5            005015         Clear\n\nOperation:\nThe contents of the memory location whose address is contained in R5\nare cleared.\n\nBefore execution                    After execution\n\n(020) 005015;  R5 = 001700;         (020) 005015;  R5 = 001700;\n(1700) 177777                       (1700) 000000\n\n\nExample of the indirect-autoincrement addressing mode (Mode 3)\n\nINC @(R2)+        005232         Increment by one\n\nOperation:\nThe contents of the memory location whose address is contained in the\nmemory location pointed to by R2 are used as the operand. The operand\nis incremented by one, and the contents of R2 are incremented by 2.\n\nBefore execution                    After execution\n\n(1000) 005232;  R2 = 10300;         (1000) 0005232;  R2 = 10302;\n(1010) 000000;                      (1010) 000001;\n(10300) 001010                      (10300) 001010",
       "notes": ""
     },
     {
@@ -516,7 +516,7 @@
     {
       "index": 86,
       "filename": "Страница 084 - 9.5. Выполнение команд.jpg",
-      "translation": "",
+      "translation": "9.5. Instruction Execution\n\nThe description of each instruction includes: the mnemonic, octal code,\ninstruction format, binary code, description of instruction execution\nand condition-code generation, special notes, and examples.\n\nThe following notation is used in the instruction descriptions:\n\nR      – general-purpose register;\nPC     – program counter (R7);\nSP     – stack pointer (R6);\nPSR    – processor status register;\nPSW    – processor status word;\nSS     – source operand addressing field;\nsrc    – source;\n(src)  – source operand;\nDD     – destination operand addressing field;\ndst    – destination;\n(dst)  – destination operand;\nXXX    – displacement (8 bits);\nNN     – displacement (6 bits);\n( )    – contents of a memory location;\n∧      – logical multiplication (\"AND\");\n∨      – logical addition (\"OR\");\n⊕      – exclusive OR (\"XOR\");\nĀ      – complement of A (\"NOT\");\n←      – becomes equal to / assigned;\n↓      – push onto stack;\n↑      – pop from stack;\nB      – byte instruction.",
       "notes": ""
     },
     {
@@ -810,13 +810,13 @@
     {
       "index": 135,
       "filename": "Страница 133 - WAIT.jpg",
-      "translation": "",
+      "translation": "Description:\nThe HALT mode is entered.\nThe PC and PSR are saved in special registers,\nthe SEL port is read,\nthe vector address is calculated,\nand the PC and PSR are loaded.\n\nWAIT                                         000001\n\nWait\n\n      0000000000000001\n\nCondition codes: unchanged.\n\nDescription:\nThe processor waits for an unmasked interrupt request.\n\nUse of this instruction provides the fastest transfer of bus\ncontrol to an external device when a request from that device\narrives. Upon execution of the WAIT instruction, the processor\nis prohibited from fetching instructions from memory. This\nallows the fastest possible exchange between external devices\nand memory, since the processor does not introduce delays while\nservicing a DMA request during the time that it releases the\nbus it had occupied.\n\nWhen executing the WAIT instruction, as with all other\ninstructions, the PC contains the address of the instruction\nfollowing the WAIT instruction.",
       "notes": ""
     },
     {
       "index": 136,
       "filename": "Страница 134 - RESET.jpg",
-      "translation": "",
+      "translation": "WAIT. Thus, when an interrupt causes the contents of the PC and PSR\nto be pushed onto the stack, the address of the instruction following\nthe WAIT instruction is preserved.\n\nReturning from the interrupt service routine\n(i.e., execution of the RTI or RTT instruction)\ncauses the interrupted process to resume at the instruction\nfollowing the WAIT instruction.\n\n\nRESET                                         000005\n\nReset External Devices\n\n      0000000000000101\n\nCondition codes: unchanged.\n\nDescription:\nUpon execution of this instruction, a pulse is generated on the\nmicroprocessor's INIT output. The pulse duration is 105 periods\nof the CLCI clock frequency.\n\nAfter the pulse, the microprocessor resumes operation following\na waiting interval equal to 968 periods of the CLCI clock\nfrequency.",
       "notes": ""
     },
     {
@@ -894,25 +894,25 @@
     {
       "index": 149,
       "filename": "Страница 147 - 10. Прерывания ПРЦ.jpg",
-      "translation": "",
+      "translation": "10. PROCESSOR INTERRUPTS\n\n10.1. When an interrupt condition occurs, the processor\nmicroprogrammatically performs the initial phase of a process switch.\nThis phase includes saving the state vector of the interrupted process\nand loading the state vector of the interrupting process.\n\nFurther process switching is performed at the software level.\n\nThe components of a process state vector are the values of the program\ncounter and the processor status word. Hereafter, the state vector of\nthe interrupting process will be called the interrupt vector, and the\nstate vector of the interrupted process will be called the current\nprocess vector.\n\n10.2. The processor saves the current process vector either in the\nstack area or in processor registers.\n\n10.3. The processor loads the interrupt vector (the values of the\nprogram counter and the processor status word) from a pair of memory\nlocations in external RAM or ROM.\n\nThe interrupt vector address (the pointer to the pair of external\nmemory locations) is generated within the processor according to the\nspecific interrupt request.\n\nThe interrupt vector address is the address of the memory location\ncontaining the program counter value.\n\nThe interrupt vector address plus two is the address of the memory\nlocation containing the processor status word value.\n\n10.4. Interruption of the current process is normally permitted only\nat the completion of an instruction.\n\nOnly a bus hang condition can interrupt instruction execution during\nany phase of that instruction.\n\n10.5. Sources of processor interrupts are:\n\n- reserved opcode in the instruction register;",
       "notes": ""
     },
     {
       "index": 150,
       "filename": "Страница 148 - 10.6. Прерывание по резервной команде.jpg",
-      "translation": "",
+      "translation": "reserved opcode in the instruction register;\nillegal opcode in the instruction register;\nbus hang condition;\nT-bit in the Processor Status Word (PSW);\nlow signal level on either the HALT or VIRQ pins;\na transition of the signal level from high to low on either the ACLO\nor EVNT pins.\n\n10.6. Reserved-opcode interrupt\n\nA reserved-opcode interrupt occurs when an attempt is made to execute\nan instruction whose opcode is not used in this processor and has been\nreserved for future extensions of the instruction set.\n\n10.7. Illegal-opcode interrupt\n\nAn interrupt occurs when an attempt is made to execute an instruction\nwith an invalid addressing mode (illegal instruction).\n\nThe illegal instructions are JMP and JSR when used with register\naddressing modes.\n\n10.8. Bus-hang interrupt\n\nA bus-hang interrupt occurs when an attempt is made to access a\nnonexistent memory location or an external device register.\n\nThe processor recognizes a bus-hang condition when no leading edge of\nthe RPLY signal is received within 128 clock periods from the moment\nthe processor asserts either the DIN or DOUT signal.\n\n10.9. T-bit interrupt\n\nA T-bit interrupt is generated when bit 4 of the PSW is set.\n\nThis interrupt is normally used for program debugging.\n\nThe T-bit may be set or cleared only by execution of the RTT, RTI,\nSTEP, and START instructions, and during loading of an interrupt\nvector.\n\nIf the T-bit is set while loading an interrupt vector, the T-bit\ninterrupt will occur before execution of the first instruction of the\nnew process.",
       "notes": ""
     },
     {
       "index": 151,
       "filename": "Страница 149.jpg",
-      "translation": "",
+      "translation": "The instruction being executed with the T-bit set in the Processor\nStatus Word (the traced instruction) is allowed to complete. The\nT-bit interrupt then occurs afterward.\n\nThe following special cases of T-bit interrupts depend on the type of\nthe traced instruction:\n\n1. The traced instruction is RTI or RTT and clears the T-bit.\n\n   A T-bit interrupt will nevertheless occur after execution of the\n   instruction. However, the Processor Status Word saved on the stack\n   will contain the T-bit cleared.\n\n2. The traced instruction is STEP or START and clears the T-bit.\n\n   No T-bit interrupt will occur after execution of the instruction.\n\n3. The traced instruction is STEP or RTT and sets the T-bit.\n\n   The T-bit interrupt will occur after execution of the instruction\n   following the RTT or STEP instruction.\n\n4. The traced instruction is RTI or START and sets the T-bit.\n\n   A T-bit interrupt will occur after execution of the instruction.\n\n5. The traced instruction is an interrupt instruction or a HALT\n   instruction and clears the T-bit.\n\n   No T-bit interrupt will occur.\n\n6. The traced instruction is an interrupt instruction or a HALT\n   instruction and sets the T-bit.\n\n   A T-bit interrupt will occur after execution of the instruction.\n\n7. A bus hang condition occurs during execution or instruction fetch\n   of the traced instruction.\n\n   When the new Processor Status Word is loaded, the T-bit is cleared.\n   No T-bit interrupt will occur.\n\n8. The traced instruction is WAIT.\n\n   No T-bit interrupt will occur. The T-bit is ignored. The processor\n   waits for an unmasked interrupt.",
       "notes": ""
     },
     {
       "index": 152,
       "filename": "Страница 150 - 10.10. Поведение ПРЦ при сбое питания.jpg",
-      "translation": "",
+      "translation": "10.10. Processor Behavior During Power Failure\n\nWhen the AC line voltage drops below the permissible level, the power\nsupply unit of the system containing the processor must generate a\nspecific sequence of power-failure signals: AC power failure (ACLO)\nand DC power failure (DCLO) (see Fig. 24).\n\nWhen the ACLO signal transitions from high to low, the processor\ngenerates a power-failure interrupt request.\n\nAfter completion of the current instruction, the processor is\ninterrupted and begins execution of the power-failure handling\nroutine.\n\nThe contents of this routine depend on the requirements of the\nparticular system.\n\nExecution of this routine is allowed only until the DCLO signal\nbecomes active (low). The duration of this interval depends on the\npower-supply design and is typically 4 ms.\n\nAfter the DCLO signal goes low, the processor aborts execution of any\noperations and asserts a low level on the INIT signal.\n\n10.11. Processor Interrupt Microprogram Procedure\n\nThe processor interrupt procedure is divided into two phases:\n\nPhase 1 — Saving the current process vector.\n\nWhen the vector is saved on the stack, data is written to memory\nthrough the stack pointer (R6) using pre-decrement addressing.\n\nFirst, the processor status word is saved; then the program counter.\n\nPhase 2 — Loading the interrupt vector.\n\nThe processor forms the interrupt-vector address.\n\nAt the interrupt-vector address, the program counter and processor\nstatus word are loaded from a pair of memory locations.\n\nThe state of interrupt requests is then analyzed.\n\nIf there are no unmasked interrupt requests, the first instruction of\nthe new process is fetched and executed.",
       "notes": ""
     },
     {
@@ -924,7 +924,7 @@
     {
       "index": 154,
       "filename": "Страница 152 - 10.12. Приоритеты источников прерываний.jpg",
-      "translation": "",
+      "translation": "Otherwise, the interrupt procedure is performed again.\n\nFigure 25 shows the principal flowchart of the interrupt procedure.\n\n10.12. Interrupt Priority Hierarchy\n\nAll interrupt sources are arranged in the following priority order\n(with respect to one another when several requests occur\nsimultaneously):\n1) Bus hang;\n2) Reserved or illegal opcode in the instruction register;\n3) T-bit in the processor status word (PSW);\n4) AC power-failure signal ACLO;\n5) HALT interrupt signal;\n6) EVNT interrupt signal;\n7) VIRQ interrupt signal.\n\nInterrupt requests are masked by changing the values of bits 7 and 8\nof the PSW (see Table 8).\n\n10.13. Fatal Interrupt Conditions\n\nIn a system using the processor, interrupt conditions may occur for\nwhich handling is not provided by the standard software.\n\nSuch conditions (fatal conditions) include:\n\n- double bus hang;\n- bus hang while fetching an interrupt vector from the bus.\n\nThe processor detects a double-bus-hang condition when a bus hang\noccurs during execution of the interrupt microprogram procedure that\nwas itself initiated because of a bus hang during a bus transfer.\n\nIn this case the interrupt procedure differs from the normal one.\n\nAs in the handling of a HALT interrupt or execution of the HALT\ninstruction, the processor performs the actions required to enter\nHALT mode:",
       "notes": ""
     },
     {
@@ -942,7 +942,7 @@
     {
       "index": 157,
       "filename": "Страница 155 - 10.14. Вектора прерываний.jpg",
-      "translation": "",
+      "translation": "1) The external register (SEL) is read using the non-addressed read\n   procedure;\n\n2) The interrupt vector address is formed:\n      IVA(15:8) = SEL(15:8);\n      IVA(7:0)  is formed depending on the cause of the interrupt;\n\n3) HALT mode is entered:\n      PSW(8) := 1;\n\n4) The program counter is loaded with the contents of the memory\n   location addressed by IVA:\n      PC := (IVA);\n\n5) The processor status register is loaded with the contents of the\n   memory location addressed by IVA + 2:\n      PSW(8:0) := (IVA + 2).\n\n10.14. Table 9 contains the interrupt vector addresses.\n\n10.15. CPC and CPSW are shadow-copy registers for the PC and PSW.\n\nIn USER mode, during execution of the i-th instruction, these registers\ncontain the values of the PC and PSW corresponding to the (i−1)-th\ninstruction. The information in these registers is updated at the end\nof the normal completion of the i-th instruction.\n\nWhen the processor switches from USER mode to HALT mode while\nPSW(7) is set to one, updating of these registers is inhibited until\neither the processor returns to USER mode or PSW(7) is cleared.",
       "notes": ""
     },
     {
@@ -954,19 +954,19 @@
     {
       "index": 159,
       "filename": "Страница 157 - 11. Особенности выполнения некоторых команд.jpg",
-      "translation": "",
-      "notes": ""
+      "translation": "11. PECULIARITIES OF EXECUTION OF CERTAIN INSTRUCTIONS\n\n11.1. During execution of the instructions\n    MUL, DIV, ASH, ASHC, TST, TSTB, and MTPS\n\naccess to the operand (in memory) occurs during the \"READ\" bus cycle.\n\n11.2. During execution of the instructions\n    MOV, CLR, and SXT\naccess to the destination operand occurs during the \"WRITE\" bus cycle.\n\n11.3. The HALT instruction causes the processor to enter the special\nHALT mode (see the description of the processor status word and HALT\ninterrupt processing).\n\n11.4. Clearing the interrupt-enable bit (bit 6) of the status register\nof a device may cause a bus timeout while receiving an interrupt vector\nfrom the channel if, during execution of the instruction that clears\nbit 6, an interrupt request from that external device occurs.\n\nTo avoid such a situation, the following sequence for clearing bit 6\nis recommended:\n\n    MTPS #200\n    CLR @#177564\n    MTPS #0\n\n11.5. The occurrence of an enabled interrupt request during execution\nof the extended arithmetic instructions\n    MUL, DIV, ASH, ASHC\n\ndoes not cause termination of execution of these instructions.\nInterrupt processing is deferred until the instruction completes.",
+      "notes": "Note that the PDP-11/40 can interrupt MUL, DIV, ASH, ASHC instructions."
     },
     {
       "index": 160,
       "filename": "Страница 158 - 11.6. Длительность импульса INT.jpg",
-      "translation": "",
+      "translation": "11.6. The duration of the INIT pulse generated by execution of the\nRESET instruction depends on the processor clock frequency and is equal\nto 105 periods of CLCI.\n\nThe duration of the delay following the end of the INIT pulse is equal\nto 968 periods of CLCI.",
       "notes": ""
     },
     {
       "index": 161,
       "filename": "Страница 159 - 12. Применение микросхемы К1801ВМ2.jpg",
-      "translation": "",
+      "translation": "12. APPLICATION OF THE K1801VM2 MICROPROCESSOR\n\nAs an example, an implementation of an interface for the system bus\nof an Elektronika-60 computer is considered. A bus-cycle speed\nmatching circuit for RAM and external devices is shown in Fig. 26.\n\nThe circuit is intended to regulate the address setup and hold times\nfor processor accesses to RAM and external devices. At the moment the\naddress is issued, the signal MSEL must be generated at a high level,\nindicating that the address belongs to RAM.\n\nThe SYNC signal is supplied to RAM directly from the processor, while\nto external devices it is supplied delayed by one period of the CLCO\nclock frequency, i.e. by 200–250 ns, through flip-flop D1.1.\n\nWhen the address belongs to the external-device area (MSEL absent),\nafter the processor asserts SYNC, the Q output of flip-flop D2.1 is\nset low and the Q̅ output high. The AR signal appears at the processor\ninput only after two periods of the CLCO clock, i.e. 400–500 ns after\nassertion of the SYNC signal.\n\nThus, for external devices, relative to the SYNC signal, an address\nsetup time of 280–350 ns and an address hold time of 200–250 ns are\nguaranteed.\n\nWhen the address belongs to the RAM area (MSEL present at a high\nlevel), flip-flop D2.1 is set to the state:\n\n    Q  = high level\n    Q̅ = low level\n\nand the AR signal reaches the processor practically immediately after\nthe processor issues the SYNC signal.\n\nFor RAM, the address setup time relative to the SYNC signal is\n80–100 ns, and the address hold time is 20–40 ns.",
       "notes": ""
     },
     {

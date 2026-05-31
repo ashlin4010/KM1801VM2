@@ -1,0 +1,913 @@
+{
+  "version": 3,
+  "folder": "КМ1801ВМ2 - Technical Description - Part 2",
+  "saved": "2026-05-31T04:38:06.644Z",
+  "pages": [
+    {
+      "index": 1,
+      "filename": "Обложка.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 2,
+      "filename": "Страница 001.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 3,
+      "filename": "Страница 002.jpg",
+      "translation": "INTEGRATED CIRCUIT KM1801VM2\n\nTECHNICAL DESCRIPTION\n\nPART 2\n\n1984",
+      "notes": ""
+    },
+    {
+      "index": 4,
+      "filename": "Страница 003 - Содержание.jpg",
+      "translation": "CONTENTS\n\nPurpose .............................................. 5\nIntroduction ......................................... 6\n\n1. General Principles of the KM1801VM2 Microprocessor Organization .... 7\n\n2. Structure and Operating Algorithms of the Microprocessor Blocks .... 14\n\n  2.1. Microprogram Control Unit ................................. 14\n    2.1.1. Instruction Decoder .................................. 14\n    2.1.2. Microinstruction Generation Circuit .................. 20\n    2.1.3. Microinstruction System .............................. 23\n    2.1.4. CFMK Decoder ......................................... 25\n    2.1.5. CFMK Synchronization Unit ............................ 31\n    2.1.6. Operation of the MCU ................................ 33\n\n  2.2. Execution Unit ........................................... 35\n    2.2.1. ALU Organization ..................................... 38\n    2.2.2. Shifter and Byte-Exchange Unit ....................... 41\n    2.2.3. Register Section of the Execution Unit ............... 43\n    2.2.4. Read-Field and Write-Field Decoder ................... 54\n    2.2.5. Execution Unit Synchronization Block ................ 56\n    2.2.6. Sign-Extension Circuit and Window Decoder ............ 59\n\n  2.3. Program Counter Unit ..................................... 62\n\n  2.4. Extended Arithmetic Unit ................................ 68\n    2.4.1. EA Registers, Timing Counter and Timing Decoder ...... 71\n    2.4.2. Extended-Arithmetic Instruction Decoder .............. 74\n    2.4.3. Extended-Arithmetic Control Circuits ................ 76\n    2.4.4. Multiplication Algorithm ............................. 78\n    2.4.5. Division Algorithm ................................... 81\n    2.4.6. Single-Word Shift Algorithm .......................... 85\n    2.4.7. Double-Word Shift Algorithm .......................... 86\n\n  2.5. Branch Condition Processing Unit ......................... 87\n\n  2.6. Interrupt Unit ........................................... 91\n\n  2.7. Interface Unit ........................................... 94\n    2.7.1. Direct Memory Access Arbiter ......................... 94\n    2.7.2. Bus Exchange Control Circuit ......................... 98\n    2.7.3. Bus-Cycle Field Decoder ............................. 102\n    2.7.4. Address Output Circuit .............................. 105",
+      "notes": ""
+    },
+    {
+      "index": 5,
+      "filename": "Страница 004.jpg",
+      "translation": "2.7.5. Read and Write Cycle Control Circuit ............ 108\n\n3. Interconnection of Blocks and Their Joint Operation . 115\n\n4. Instruction Fetch and Execution ..................... 117\n   4.1. General Principles of Instruction Fetch and\n        Execution ...................................... 117\n   4.2. Event Correction During Prefetching of\n        Instructions ................................... 117\n\n5. Chip Layout Development ............................. 133\n\n6. Crystal (Chip) Fabrication Technology ............... 142\n   6.1. General Provisions ............................. 142\n   6.2. Sequence of Technological Operations ........... 143\n   6.3. Electrical Parameters of Structures ............ 143\n   6.4. Sequence ... (cut off in image)",
+      "notes": ""
+    },
+    {
+      "index": 6,
+      "filename": "Страница 005 - Назначение.jpg",
+      "translation": "PURPOSE\n\nThis technical description is intended for the study of the KM1801VM2 integrated circuit and serves as a supplement to Part I of the technical description of this integrated circuit.",
+      "notes": ""
+    },
+    {
+      "index": 7,
+      "filename": "Страница 006 - Введение.jpg",
+      "translation": "INTRODUCTION\n\nThe KM1801VM2 integrated circuit is a single-chip 16-bit microprocessor of increased functional complexity, intended for processing digital information in general-purpose equipment.\n\nAs part of a computer system, the microprocessor can be used for process control, instrumentation and measurement equipment, communication systems, and for solving engineering, technical, and economic problems.",
+      "notes": ""
+    },
+    {
+      "index": 8,
+      "filename": "Страница 007 - 1. Общие принципы организации микропроцессора КМ1801ВМ2.jpg",
+      "translation": "1. GENERAL PRINCIPLES OF KM1801VM2 MICROPROCESSOR ORGANIZATION\n\nThe KM1801VM2 integrated circuit is a single-chip 16-bit microprocessor.\nNo additional hardware is required for its operation.\n\nThe internal microprogram control unit provides execution of the entire\ninstruction set of the Elektronika-60 computer, except for floating-point\ninstructions and console-mode instructions.\n\nFor complete compatibility with the Elektronika-60 instruction set, the\nmicroprocessor provides the possibility of operating with a system ROM,\nin which additional instructions may be implemented.\n\nThe system ROM may be organized in such a way that its address space does\nnot occupy addresses within the main addressing area. This is achieved by\nintroducing an additional 17th address bit, which allows the processor's\naddress space to be doubled.\n\nThe additional address-space area is used not only for extending the\ninstruction set, but also for implementing various bootstrap modes.\n\nTo accept bootstrap conditions, the microprocessor includes a special\naddress-less read procedure. During this procedure an external bootstrap\ncondition register is read, in which the high-order byte of the system\nmemory address is stored.\n\nUpon initial power-up, the processor reads this register using the\naddress-less read procedure, forms an address from the information read,\nand loads the program counter from that address.\n\nThe address is then incremented by 2 and the Processor Status Register\n(PSW) is loaded.\n\nAfter that, if there are no unmasked interrupts, the microprocessor\nbegins program execution.\n\nThe bootstrap condition register is read not only during initial startup,\nbut also during execution of the HALT instruction and during the handling\nof certain fatal conditions.\n\nFurther details...",
+      "notes": ""
+    },
+    {
+      "index": 9,
+      "filename": "Страница 008.jpg",
+      "translation": "All of these features are described in detail in the corresponding sections below.\n\nThe microprocessor implements a pipelined principle of instruction\nfetch and execution. The operation of the microprocessor is organized\nsuch that by the end of processing the i-th instruction, the (i+1)-th\ninstruction has already been fetched into an internal buffer register,\nand fetching of the (i+2)-th instruction has begun.\n\nSpecial cases that disrupt the pipeline are detected by hardware.\nAll such cases are described in detail in Section 4.\n\nThe microprocessor contains an internal interrupt unit. It provides\npriority handling of all interrupts, both external and internal.\nInterrupt processing and interrupt-vector generation are performed\nby the microprocessor without the use of any additional integrated\ncircuits.\n\nAll arithmetic and logical operations on operands, as well as the\ncalculation of operand and instruction addresses, are performed in\nthe processor's operational unit. The operational unit processes\nboth 16-bit words and 8-bit bytes. It also generates the condition\ncodes resulting from operations and stores them in the Processor\nStatus Register.\n\nTo execute multiplication, division, and arithmetic shift operations,\nthe microprocessor includes a special extended-arithmetic unit.\nThe use of this unit significantly reduces execution time for the\nextended arithmetic instructions compared with a purely microprogrammed\nimplementation. The size of the microprogram memory is also\nsignificantly reduced.\n\nTo reduce the size of the main microprogram memory, a special branch-\ncondition processing unit has been incorporated into the microprocessor.\nAnalysis of branch conditions occurs between cycles of the microprogram\ncontrol unit; generation and execution of microinstructions are not\ndelayed, except...",
+      "notes": ""
+    },
+    {
+      "index": 10,
+      "filename": "Страница 009.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 11,
+      "filename": "Страница 010.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 12,
+      "filename": "Страница 011 - Рис 2. Временная диаграмма формирования сигналов.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 13,
+      "filename": "Страница 012 - Рис 3. Схема формирования стробимпульов и сигналов начальной установки.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 14,
+      "filename": "Страница 013.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 15,
+      "filename": "Страница 014 - 2. Устройство и алгоритм работы блоков микропроцессора.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 16,
+      "filename": "Страница 015 - Рис 4. Структурная схема ДШК.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 17,
+      "filename": "Страница 016.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 18,
+      "filename": "Страница 017.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 19,
+      "filename": "Страница 018.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 20,
+      "filename": "Страница 019 - Рис 5. Блок синхронизации ДШК.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 21,
+      "filename": "Страница 020 - 2.1.2. Схема формирования микрокоманд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 22,
+      "filename": "Страница 021- Рис 6. Структурная схема СФМК.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 23,
+      "filename": "Страница 022.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 24,
+      "filename": "Страница 023 - 2.1.3. Система микрокоманд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 25,
+      "filename": "Страница 024 - Рис 7. Формат микрокоманды.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 26,
+      "filename": "Страница 025 - 2.1.4. Дешифратор СФМК.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 27,
+      "filename": "Страница 026.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 28,
+      "filename": "Страница 027.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 29,
+      "filename": "Страница 028.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 30,
+      "filename": "Страница 029.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 31,
+      "filename": "Страница 030.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 32,
+      "filename": "Страница 031 - 2.1.5. Блок синхронизации СФМК.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 33,
+      "filename": "Страница 032 - Рис 8. Блок синхронизации СФМК.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 34,
+      "filename": "Страница 033 - 2.1.6. Работа БМУ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 35,
+      "filename": "Страница 034 - Рис 9. Временная диаграмма работы БМУ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 36,
+      "filename": "Страница 035 - 2.2. Операционный блок.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 37,
+      "filename": "Страница 036.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 38,
+      "filename": "Страница 037 - Рис 10. Структурная операционной части ОБ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 39,
+      "filename": "Страница 038 - 2.2.1. Организация АЛУ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 40,
+      "filename": "Страница 039 - Рис 11. АЛУ микропроцессора.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 41,
+      "filename": "Страница 040 - Рис 12. Схема переноса АЛУ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 42,
+      "filename": "Страница 041 - 2.2.2. Сдвигатель и блок обмена байтов.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 43,
+      "filename": "Страница 042.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 44,
+      "filename": "Страница 043 - 2.2.3. Регистровая часть ОБ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 45,
+      "filename": "Страница 044.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 46,
+      "filename": "Страница 045.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 47,
+      "filename": "Страница 046 - Рис 13. Структурная схема БРД и РА.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 48,
+      "filename": "Страница 047.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 49,
+      "filename": "Страница 048.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 50,
+      "filename": "Страница 049 - Рис 14. Регистр состояния микропроцессора.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 51,
+      "filename": "Страница 050.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 52,
+      "filename": "Страница 051.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 53,
+      "filename": "Страница 052 - Рис 15. Регистры БРК, РК и блоки констант.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 54,
+      "filename": "Страница 053 - Рис 16. Таблицы констант.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 55,
+      "filename": "Страница 054 - 2.2.4. Дешифратор поля чтения и поля записи.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 56,
+      "filename": "Страница 055 - Рис 17. Дешифратор поля чтения и поля записи.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 57,
+      "filename": "Страница 056 - 2.2.5. Блок синхронизации ОБ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 58,
+      "filename": "Страница 057 - Рис 18. Блок синхронизации ОБ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 59,
+      "filename": "Страница 058.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 60,
+      "filename": "Страница 059 - 2.2.6. Схема размножения знака и дешифратор окна.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 61,
+      "filename": "Страница 060 - Рис 19. Временная диаграмма работы ОБ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 62,
+      "filename": "Страница 061 - Рис 20. Схема размножения знака.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 63,
+      "filename": "Страница 062 - 2.3. Блок счетчика команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 64,
+      "filename": "Страница 063 - Рис 21. Структура счетчика команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 65,
+      "filename": "Страница 064.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 66,
+      "filename": "Страница 065 - Рис 22. Алгоритм управления переписи значения СК2 в СК1.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 67,
+      "filename": "Страница 066 - Рис 22а. Алгоритм продвижения СК1 и СК2 на 4-х типах команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 68,
+      "filename": "Страница 067.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 69,
+      "filename": "Страница 068 - 2.4. Блок расширенной арифметики.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 70,
+      "filename": "Страница 069 - Рис 23. Копирование СК1 в КСК в конце успешной процедуры записи на примере.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 71,
+      "filename": "Страница 070 - Рис 24. Сохранение в регистре КСК значения, соответствующего команде записи.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 72,
+      "filename": "Страница 071 - 2.4.1. Регистры РА, счетчик и дешифратор тактов.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 73,
+      "filename": "Страница 072 - Рис 25. Регистры РА, счетчик и дешифратор тактов.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 74,
+      "filename": "Страница 073 - Рис 25а. Схема счетчика тактов.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 75,
+      "filename": "Страница 074 - 2.4.2. Дешифратор команд расширенной арифметики.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 76,
+      "filename": "Страница 075 - Рис 26. Дешифратор команд расширенной арифметики.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 77,
+      "filename": "Страница 076 - 2.4.3. Схемы управления блока расширенной арифметики.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 78,
+      "filename": "Страница 077 - Рис 27. Схема управления блоком расширенной арифметики.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 79,
+      "filename": "Страница 078 - 2.4.4. Алгоритм выполнения умножения.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 80,
+      "filename": "Страница 079.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 81,
+      "filename": "Страница 080.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 82,
+      "filename": "Страница 081 - 2.4.5. Алгоритм выполнения деления.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 83,
+      "filename": "Страница 082.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 84,
+      "filename": "Страница 083.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 85,
+      "filename": "Страница 084.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 86,
+      "filename": "Страница 085 - 2.4.6. Алгоритм выполнения сдвига одинарного слова.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 87,
+      "filename": "Страница 086 - 2.4.7. Алгоритм выполнения сдвига двойного слова.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 88,
+      "filename": "Страница 087 - 2.5. Блок обработки условий ветвления.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 89,
+      "filename": "Страница 088 - Рис 28. Блок обработки условий ветвления.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 90,
+      "filename": "Страница 089.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 91,
+      "filename": "Страница 090 - Рис 29. Временная диаграмма блока обработки условий ветвления.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 92,
+      "filename": "Страница 091 - 2.6. Блок прерываний.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 93,
+      "filename": "Страница 092.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 94,
+      "filename": "Страница 093.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 95,
+      "filename": "Страница 094 - 2.7. Интерфейсный блок.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 96,
+      "filename": "Страница 095 - Рис 30. Блок прерываний.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 97,
+      "filename": "Страница 096 - Рис 31. Временная диаграмма работы БПР.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 98,
+      "filename": "Страница 097 - Рис 32. Арбитр прямого доступа к памяти.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 99,
+      "filename": "Страница 098 - 2.7.2. Схема управления обменами.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 100,
+      "filename": "Страница 099 - Рис 33. Схема торможения по занятости регистра адреса.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 101,
+      "filename": "Страница 100 - Рис 35. Схема торможения по приему данных.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 102,
+      "filename": "Страница 101 - Рис 34. Схема торможения по готовности ИБ.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 103,
+      "filename": "Страница 102 - 2.3.7. Дешифратор поля обмена.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 104,
+      "filename": "Страница 103 - Рис 36. Торможение по признаку ПД.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 105,
+      "filename": "Страница 104 - Рис 37. Дешифратор поля обменов.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 106,
+      "filename": "Страница 105 - 2.7.4. Схема выдачи адреса.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 107,
+      "filename": "Страница 106 - Рис 38. Схема выдачи адреса.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 108,
+      "filename": "Страница 107.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 109,
+      "filename": "Страница 108 - 2.7.5. Схема управления циклами чтения и записи.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 110,
+      "filename": "Страница 109 - Рис 39. Схема управления циклами чтения и записи.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 111,
+      "filename": "Страница 110.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 112,
+      "filename": "Страница 111 - Рис 40. Временная диаграмма безадресного чтения.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 113,
+      "filename": "Страница 112 - Рис 41. Временная диаграмма адресного чтения.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 114,
+      "filename": "Страница 113.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 115,
+      "filename": "Страница 114 - Рис 42. Временаня диаграмма записи.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 116,
+      "filename": "Страница 115 - 3. Связь между блоками и их совместная работа.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 117,
+      "filename": "Страница 116 - Рис 43. Временная диаграмма выполнения команды в формате регистр-регистр.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 118,
+      "filename": "Страница 117 - 4. Прием и обработка команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 119,
+      "filename": "Страница 118 - Рис 44. Временная диаграмма параллельной работы основных блоков процессора.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 120,
+      "filename": "Страница 119 - Рис 45. Общий алгоритм приема и обработки команд.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 121,
+      "filename": "Страница 120 - Рис 46. Алгоритм включения питания.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 122,
+      "filename": "Страница 121 - Рис 48. Алгоритм адресации источника.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 123,
+      "filename": "Страница 122 - Рис 49. Алторитм адресации приемника, выполнения команд и анализа.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 124,
+      "filename": "Страница 123 - Рис 50. Алгоритм анализа прерываний.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 125,
+      "filename": "Страница 124 - Рис 51. Алгоритм обработки прерывания.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 126,
+      "filename": "Страница 125.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 127,
+      "filename": "Страница 126.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 128,
+      "filename": "Страница 127 - Рис 52. Алгоритм обнаружения модификации следующей команды.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 129,
+      "filename": "Страница 128 - Рис 53. Алгоритм обработки зависания.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 130,
+      "filename": "Страница 129 - Рис 54. Алгоритм коррекции сбоя.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 131,
+      "filename": "Страница 130 - Рис 55. Коррекция зависания по опережающему чтению.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 132,
+      "filename": "Страница 131 - Рис 56. Временная диаграмма установки флажка сбоя опережающей загрузки.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 133,
+      "filename": "Страница 132 - Рис 57. Коррекция сбоя опережающей загрузки БРК.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 134,
+      "filename": "Страница 133 - 5. Разработка топологии кристалла.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 135,
+      "filename": "Страница 134 - Рис 58. Топология элементов.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 136,
+      "filename": "Страница 135.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 137,
+      "filename": "Страница 136 - Рис 59. Расположение блоков в кристалле.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 138,
+      "filename": "Страница 137.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 139,
+      "filename": "Страница 138 - Рис 60. Топология библиотечных элементов.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 140,
+      "filename": "Страница 139.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 141,
+      "filename": "Страница 140 - Рис 61. Пример топологии.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 142,
+      "filename": "Страница 141.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 143,
+      "filename": "Страница 142 - 6. Технология изготовления кристаллов БИС КМ1801ВМ2.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 144,
+      "filename": "Страница 143 - 6.2. Последовательность фотографических операций.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 145,
+      "filename": "Страница 144.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 146,
+      "filename": "Страница 145 - 6.4. Последовательность проведения технологических операций.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 147,
+      "filename": "Страница 146 - Рис 62. Последовательность проведения технологических операций.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 148,
+      "filename": "Страница 147.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 149,
+      "filename": "Страница 148.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 150,
+      "filename": "Страница 149.jpg",
+      "translation": "",
+      "notes": ""
+    },
+    {
+      "index": 151,
+      "filename": "Страница 150.jpg",
+      "translation": "",
+      "notes": ""
+    }
+  ]
+}
