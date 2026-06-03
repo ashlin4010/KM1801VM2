@@ -1,7 +1,7 @@
 {
   "version": 3,
   "folder": "КМ1801ВМ2 - Technical Description - Part 1",
-  "saved": "2026-05-31T04:37:37.780Z",
+  "saved": "2026-06-02T09:41:29.170Z",
   "pages": [
     {
       "index": 1,
@@ -301,7 +301,7 @@
       "index": 50,
       "filename": "Страница 048 - 6.5. Запись.jpg",
       "translation": "If the AR and RPLY signals were removed before the SYNC signal was removed, and there was no DMA request, then after removal of the SYNC signal the processor places the address for the next bus cycle on the bus.\n\nThe WTBT signal remains at the high level throughout the entire addressed-read cycle.\n\nIf an addressed read is being performed from system (\"hidden\") memory, the SEL signal is asserted low during the address output phase. In time, it coincides with the signals on the AD(0:15) pins.\n\n6.5. Write\nThe write procedure (Fig. 16) is used to write data to a memory location or to a register of an external device.\n\nThe address output phase during a write is the same as for all addressed bus transactions.\n\nAfter completion of address output, the signal on the AD(0:15) pins transitions to the active high level and, depending on the addressing type, after 0.5T or 1.5T the processor places data on the AD(0:15) pins.\n\n1T after the data is placed on the bus, the DOUT signal is asserted low.\n\nAfter a low level appears on the RPLY input, the processor completes the write procedure by first removing the DOUT signal, then 0.5T later removing the data from the AD(0:15) pins, and another 0.5T later removing the SYNC signal.\n\nIf no RPLY signal arrives within 64T after assertion of DOUT, the processor removes DOUT, SYNC, and the data from the AD(0:15) pins, and proceeds to bus timeout (hang) error processing.\n\nTo minimize the interval between the arrival of the RPLY signal and removal of the DOUT signal, the RPLY signal should be asserted during the first two-thirds of the high phase of the CLCO signal.\n\nIf the RPLY and AR signals were removed before the removal of the SYNC signal and there there was no DMA request, then 0.5T after the data is removed the processor places on the AD(0:15) pins the address for the next bus cycle.",
-      "notes": ""
+      "notes": "WTBT = 0\n    word access\n\nWTBT = 1 and A0 = 0\n    low byte access\n\nWTBT = 1 and A0 = 1\n    high byte access"
     },
     {
       "index": 51,
@@ -372,7 +372,7 @@
     {
       "index": 62,
       "filename": "Страница 060 - Рис 20. Диаграмма сигналов при включении питания.jpg",
-      "translation": "",
+      "translation": "Starting the CPU:\n\n1. First apply power and hold ~DLLO and ~ACLO\n\n2. Wait a minimum of 5 clocks (use 8bit counter and wait 6 clocks)\n2a. De-assert ~DLLO, ~INIT will be de-asserted at the same time.\n\n3.  Wait a minimum of 10 clocks (use 8bit counter and wait 16 clocks)\n3a. De-assert ~ACLO\n\n4.  .... after about 10 clocks  ~SEL & ~DIN will be asserted, This is knowen as a \"Non-addressed Read\". During the state where responsible for presenting the bootstrap vector address (BVA).\n\nNote that the BVA only used the top 8 bits eg:\nBVA(15:8) = SEL(15:8)\nBVA(7:0) = 0\n\n5. Next the program counter is loaded from the *BVA. This is an address operation the address should be latchedon the falling edge of ~SYNC. Note the use of ~SEL implies this should be read from hidden memory.\n\n6. While ~DIN is asserted output data onto the bus, in this case a new address for the program counter.\n\n7. Same as 5 but BVA + 2\n\n8.  Same as 6 but processor status word\n\nThere looks to be 4 main read modes:\nNon-addressed Read\n~SEL & ~DIN & SYNC - Output bootstrap vector address\n\nHidden Memory Read\n~SEL & DIN & ~SYNC - Latch address\nSEL & ~DIN & ~SYNC - Output data\n\nBus Memory Read\nSEL & DIN & ~SYNC - Latch address\nSEL & ~DIN & ~SYNC - Output data\n\nNote that for data-in and data-out you first need to know the address space to be used. That is noted by ~SEL, however that is only active during the address address phase. So it needs to be latched.\n\nI think its best to think of it as AD17, then  you can just split the addrerss spae in half.\n\nEg on (DIN | DOUT) & ~SYNC latch address AND SEL.",
       "notes": ""
     },
     {

@@ -27,6 +27,8 @@ The translation viewer is a tool made by Claude Code to view and create translat
 - Additional resources
     - http://www.nedopc.org/forum/viewtopic.php?t=20572&sid=48af47f8728fc03e16203680a126e6d5
     - https://dplm2008.narod.ru/str/komplects/k1801/km1801vm2.html
+    - https://photos.offog.org/elektronika-mc1201-02/g/index.html
+    - https://www.emuverse.ru/wiki/%D0%94%D0%92%D0%9A
 
 - Translation via online AI services + manual edit
     - https://openl.io/translate/image
